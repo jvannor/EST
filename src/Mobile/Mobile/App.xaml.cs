@@ -13,7 +13,7 @@ namespace Mobile
             MainPage = new MainPage();
         }
 
-        protected override void OnStart()
+        protected override async void OnStart()
         {
         }
 
