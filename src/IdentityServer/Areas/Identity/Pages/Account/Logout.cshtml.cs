@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Duende.IdentityServer.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;

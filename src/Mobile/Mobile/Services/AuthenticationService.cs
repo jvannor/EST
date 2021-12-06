@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using IdentityModel.OidcClient;
 using Mobile.ServiceContracts;
 using Mobile.Utilities;
+using Xamarin.Essentials;
+using IdentityModel.OidcClient.Browser;
 
 namespace Mobile.Services
 {
@@ -30,6 +32,13 @@ namespace Mobile.Services
             try
             {
                 var loginResult = await client.LoginAsync(new LoginRequest());
+                if (!loginResult.IsError)
+                {
+                    await SecureStorage.SetAsync("est.mobile.accessToken", loginResult.AccessToken);
+                    await SecureStorage.SetAsync("est.mobile.identityToken", loginResult.IdentityToken);
+                    await SecureStorage.SetAsync("est.mobile.refreshToken", loginResult.RefreshToken);
+                }
+
                 result = !loginResult.IsError;
             }
             catch(Exception ex)
@@ -44,7 +53,8 @@ namespace Mobile.Services
             bool result = false;
             try
             {
-                var logoutResult = await client.LogoutAsync(new LogoutRequest());
+                var identityToken = await SecureStorage.GetAsync("est.mobile.identityToken");
+                var logoutResult = await client.LogoutAsync(new LogoutRequest() { BrowserDisplayMode = DisplayMode.Hidden, IdTokenHint = identityToken });
                 result = !logoutResult.IsError;
             }
             catch (Exception ex)

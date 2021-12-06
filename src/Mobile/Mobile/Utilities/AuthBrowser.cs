@@ -14,11 +14,14 @@ namespace Mobile.Utilities
     {
         public async Task<BrowserResult> InvokeAsync(BrowserOptions options, CancellationToken cancellationToken = default)
         {
-            var result = new BrowserResult();
+            var result = new BrowserResult() { ResultType = BrowserResultType.Success };
             try
             {
                 var webResult = await WebAuthenticator.AuthenticateAsync(new Uri(options.StartUrl), new Uri(options.EndUrl));
-                result.Response = ParseAuthenticatorResult(webResult);
+                if (string.Compare(options.EndUrl, Constants.RedirectUri) == 0)
+                {
+                    result.Response = ParseAuthenticatorResult(webResult);
+                }
             }
             catch(Exception ex)
             {
