@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using IdentityServer.Data;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,9 +12,30 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
-builder.Services.AddControllersWithViews();
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
 
+var identitySerevrConnectionString = builder.Configuration.GetConnectionString("IdentityServerConnection");
+var migrationAssembly = typeof(Program).GetTypeInfo().Assembly.GetName().Name;
+builder.Services.AddIdentityServer(options =>
+{
+    options.Events.RaiseErrorEvents = true;
+    options.Events.RaiseInformationEvents = true;
+    options.Events.RaiseFailureEvents = true;
+    options.Events.RaiseSuccessEvents = true;
+
+    options.EmitStaticAudienceClaim = true;
+}).AddConfigurationStore(options =>
+{
+    options.ConfigureDbContext =
+        b => b.UseSqlServer(identitySerevrConnectionString, sql => sql.MigrationsAssembly(migrationAssembly));
+}).AddOperationalStore(options =>
+{
+    options.ConfigureDbContext =
+        b => b.UseSqlServer(identitySerevrConnectionString, sql => sql.MigrationsAssembly(migrationAssembly));
+}).AddAspNetIdentity<IdentityUser>();
+
+builder.Services.AddControllersWithViews();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -32,7 +54,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseIdentityServer();
 app.UseAuthentication();
 app.UseAuthorization();
 
