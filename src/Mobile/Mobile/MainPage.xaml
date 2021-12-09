@@ -7,6 +7,7 @@
         <Label Text="Main Page" />
         <Button Text="Log in" Clicked="Login_Clicked" />
         <Button Text="Log off" Clicked="Logoff_Clicked"/>
+        <Button Text="Invoke Rest Service" Clicked="InvokeRestService_Clicked" />
     </StackLayout>
 
 </ContentPage>
