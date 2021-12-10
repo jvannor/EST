@@ -15,6 +15,7 @@ namespace Mobile.Core
 
             builder.RegisterType<AuthenticationService>().As<IAuthenticationService>();
             builder.RegisterType<NavigationService>().As<INavigationService>();
+            builder.RegisterType<GenericRestService>().As<IGenericRestService>();
 
             container = builder.Build();
         }

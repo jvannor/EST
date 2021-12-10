@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Mobile.Core;
 using Mobile.ServiceContracts;
+using Xamarin.Essentials;
+using System.Text.Json.Nodes;
+using System.Text.Json;
+using Mobile.Utilities;
 
 namespace Mobile
 {
@@ -17,18 +21,26 @@ namespace Mobile
             InitializeComponent();
 
             authenticationService = AppContainer.Resolve<IAuthenticationService>();
+            genericRestService = AppContainer.Resolve<IGenericRestService>();
         }
 
         private async void Login_Clicked(object sender, EventArgs e)
         {
-            await authenticationService?.SignIn();
+            await authenticationService.Login();
         }
 
         private async void Logoff_Clicked(object sender, EventArgs e)
         {
-            await authenticationService?.SignOut();
+            await authenticationService.Logout();
+        }
+
+        private async void InvokeRestService_Clicked(object sender, EventArgs e)
+        {
+            var credentials = await authenticationService.GetCredentials();
+            var result = await genericRestService.Get<JsonArray>("https://api.dev.detroitcyclecar.com:6001/api/report/testuser01%40email.com", credentials.AccessToken);
         }
 
         private IAuthenticationService authenticationService;
+        private IGenericRestService genericRestService;
     }
 }

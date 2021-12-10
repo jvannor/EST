@@ -8,6 +8,7 @@ using Mobile.ServiceContracts;
 using Mobile.Utilities;
 using Xamarin.Essentials;
 using IdentityModel.OidcClient.Browser;
+using System.Text.Json;
 
 namespace Mobile.Services
 {
@@ -26,42 +27,89 @@ namespace Mobile.Services
             });
         }
 
-        public async Task<bool> SignIn()
-        { 
-            bool result = false;
+        public async Task<bool> Login()
+        {
             try
             {
-                var loginResult = await client.LoginAsync(new LoginRequest());
-                if (!loginResult.IsError)
+                var result = await client.LoginAsync();
+                if (!result.IsError)
                 {
-                    await SecureStorage.SetAsync("est.mobile.accessToken", loginResult.AccessToken);
-                    await SecureStorage.SetAsync("est.mobile.identityToken", loginResult.IdentityToken);
-                    await SecureStorage.SetAsync("est.mobile.refreshToken", loginResult.RefreshToken);
+                    var credentials = result.ToCredentials();
+                    var json = JsonSerializer.Serialize(credentials);
+                    await SecureStorage.SetAsync("est.mobile.credentials", json);
+                    return true;
                 }
-
-                result = !loginResult.IsError;
+                else
+                    throw new ApplicationException($"Login failure, {result?.Error}; {result?.ErrorDescription}");
             }
             catch(Exception ex)
             {
-                Debug.WriteLine($"AuthenticationService::SignIn() Exception; {ex.ToString()}");
+                Debug.WriteLine($"AuthenticationService::Login() experienced an unexpected exception, {ex.GetType().Name}; {ex.Message}");
+                throw;
             }
-            return result;
         }
 
-        public async Task<bool> SignOut()
+        public async Task<bool> Logout()
         {
-            bool result = false;
             try
             {
-                var identityToken = await SecureStorage.GetAsync("est.mobile.identityToken");
-                var logoutResult = await client.LogoutAsync(new LogoutRequest() { BrowserDisplayMode = DisplayMode.Hidden, IdTokenHint = identityToken });
-                result = !logoutResult.IsError;
+                var json = await SecureStorage.GetAsync("est.mobile.credentials");
+                var credentials = JsonSerializer.Deserialize<Credentials>(json);
+
+                var result = await client.LogoutAsync(new LogoutRequest { IdTokenHint = credentials.IdentityToken });
+                if (!result.IsError)
+                    SecureStorage.Remove("est.mobile.credentials");
+                else
+                    throw new ApplicationException($"Logout failure, {result?.Error}; {result?.ErrorDescription}");
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine($"AuthenticationService::Logout() experienced an unexpected exception, {ex.GetType().Name}; {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task<Credentials> GetCredentials()
+        {
+            try
+            {
+                return await RefreshCredentials(false);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"AuthenticationService::SignIn() Exception; {ex.ToString()}");
+                Debug.WriteLine($"AuthenticationService::GetCredentials() experienced an unexpected exception, {ex.GetType().Name}; {ex.Message}");
+                throw;
             }
-            return result;
+        }
+
+        public async Task<Credentials> RefreshCredentials(bool force)
+        {
+            try
+            {
+                var json = await SecureStorage.GetAsync("est.mobile.credentials");
+                var credentials = JsonSerializer.Deserialize<Credentials>(json);
+                if (force || (DateTimeOffset.UtcNow.AddMinutes(15) >= credentials.AccessTokenExpiration))
+                {
+                    var result = await client.RefreshTokenAsync(credentials.RefreshToken);
+                    if (!result.IsError)
+                    {
+                        credentials = result.ToCredentials();
+                        json = JsonSerializer.Serialize(credentials);
+                        await SecureStorage.SetAsync("est.mobile.credentials", json);
+                    }
+                    else
+                        throw new ApplicationException($"Refresh failure, {result?.Error}; {result?.ErrorDescription}");
+                }
+
+                return credentials;
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine($"AuthenticationService::RefreshCredentials() encountered an unexpected exception, {ex.GetType().Name}; {ex.Message}");
+                throw;
+            }
         }
 
         private OidcClient client;

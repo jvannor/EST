@@ -10,6 +10,6 @@ namespace Mobile.Utilities
         public const string ClientId = "EST.Mobile";
         public const string PostLogoutRedirectUri = "est.mobile://signout-callback-oidc";
         public const string RedirectUri = "est.mobile://signin-oidc";
-        public const string Scope = "openid profile email offline_access";
+        public const string Scope = "openid profile email EST.WebApi offline_access";
     }
 }
