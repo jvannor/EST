@@ -9,6 +9,8 @@ using Mobile.Core;
 using Mobile.ServiceContracts;
 using Xamarin.Essentials;
 using System.Text.Json.Nodes;
+using System.Text.Json;
+using Mobile.Utilities;
 
 namespace Mobile
 {
@@ -24,18 +26,18 @@ namespace Mobile
 
         private async void Login_Clicked(object sender, EventArgs e)
         {
-            await authenticationService?.SignIn();
+            await authenticationService.Login();
         }
 
         private async void Logoff_Clicked(object sender, EventArgs e)
         {
-            await authenticationService?.SignOut();
+            await authenticationService.Logout();
         }
 
         private async void InvokeRestService_Clicked(object sender, EventArgs e)
         {
-            var token = await SecureStorage.GetAsync("est.mobile.accessToken");
-            var result = await genericRestService.Get<JsonArray>("https://api.dev.detroitcyclecar.com:6001/weatherforecast", token);
+            var credentials = await authenticationService.GetCredentials();
+            var result = await genericRestService.Get<JsonArray>("https://api.dev.detroitcyclecar.com:6001/api/report/testuser01%40email.com", credentials.AccessToken);
         }
 
         private IAuthenticationService authenticationService;
