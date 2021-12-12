@@ -1,0 +1,23 @@
+name: Docker Image CI
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  build-identity-server:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      working-directory: ./src/IdentityServer
+      run: docker build . --file Dockerfile --tag jvannor/est-identity-server:latest
+    
+  build-webp-api:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      working-directory: ./src/WebApi
+      run: docker build . --file Dockerfile --tag jvannor/est-web-api:latest
