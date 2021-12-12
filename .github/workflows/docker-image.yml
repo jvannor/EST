@@ -13,7 +13,11 @@ jobs:
       working-directory: ./src/IdentityServer
       run: docker build . --file Dockerfile --tag jvannor/est-identity-server:latest
     - name: Login
-      run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+      run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+    - name: Push
+      run: docker push jvannor/est-identity-server:latest
+    - name: Logout
+      run: docker logout
     
   build-webp-api:
     runs-on: ubuntu-latest
@@ -22,3 +26,9 @@ jobs:
     - name: Build the Docker image
       working-directory: ./src/WebApi
       run: docker build . --file Dockerfile --tag jvannor/est-web-api:latest
+    - name: Login
+      run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+    - name: Push
+      run: docker push jvannor/est-web-api:latest
+    - name: Logout
+      run: docker logout
