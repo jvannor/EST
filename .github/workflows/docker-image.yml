@@ -1,8 +1,9 @@
-name: Docker Image CI
+name: Build IdentityServer and WebApi
 
 on:
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
 
