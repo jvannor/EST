@@ -20,7 +20,10 @@
 
         public string Subcategory { get; set; }
 
+        public string Detail { get; set; }
+
         public List<string> Tags { get; private set; } 
+            = new List<string>(); 
 
         public string Description { get; set; }
     }
