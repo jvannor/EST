@@ -11,12 +11,14 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build the Docker image
       working-directory: ./src/IdentityServer
-      run: docker build . --file Dockerfile --tag jvannor/est-identity-server:latest
-    - name: Login
+      run: docker build . --file Dockerfile -t jvannor/est-identity-server:0 -t jvannor/est-identity-server:latest
+    - name: Login to Docker Hub
       run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-    - name: Push
-      run: docker push jvannor/est-identity-server:latest
-    - name: Logout
+    - name: Push to Docker Hub
+      run: docker push jvannor/est-identity-server:0
+    - name: Apply Latest Tag
+      run: docker tag jvannor/est-identity-server:0 jvannor/est-identity-server:latest
+    - name: Logout from Docker Hub
       run: docker logout
     
   build-webp-api:
@@ -25,10 +27,12 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build the Docker image
       working-directory: ./src/WebApi
-      run: docker build . --file Dockerfile --tag jvannor/est-web-api:latest
-    - name: Login
+      run: docker build . --file Dockerfile -t jvannor/est-web-api:0 -t jvannor/est-web-api:latest
+    - name: Login to Docker Hub
       run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-    - name: Push
-      run: docker push jvannor/est-web-api:latest
-    - name: Logout
+    - name: Push to Docker Hub
+      run: docker push jvannor/est-web-api:0
+    - name: Apply Latest Tag
+      run: docker tag jvannor/est-web-api:0 jvannor/est-web-api:latest
+    - name: Logout from Docker Hub
       run: docker logout
