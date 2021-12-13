@@ -15,9 +15,7 @@ jobs:
     - name: Login to Docker Hub
       run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
     - name: Push to Docker Hub
-      run: docker push jvannor/est-identity-server:0
-    - name: Apply Latest Tag
-      run: docker tag jvannor/est-identity-server:0 jvannor/est-identity-server:latest
+      run: docker push -a jvannor/est-identity-server
     - name: Logout from Docker Hub
       run: docker logout
     
@@ -31,8 +29,6 @@ jobs:
     - name: Login to Docker Hub
       run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
     - name: Push to Docker Hub
-      run: docker push jvannor/est-web-api:0
-    - name: Apply Latest Tag
-      run: docker tag jvannor/est-web-api:0 jvannor/est-web-api:latest
+      run: docker push -a jvannor/est-web-api
     - name: Logout from Docker Hub
       run: docker logout
