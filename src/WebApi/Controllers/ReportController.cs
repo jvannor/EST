@@ -17,12 +17,19 @@ namespace WebApi.Controllers
             reportService = service;
 
         [HttpGet]
-        public async Task<List<Report>> Get() => await reportService.GetAsync();
+        //public async Task<List<Report>> Get() => await reportService.GetAsync();
+        public async Task<List<Report>> Get(
+        [FromQuery]string? subject,
+        [FromQuery]DateTime? begin,
+        [FromQuery]DateTime? end)
+        {
+            return await reportService.GetAsync(subject, begin, end);
+        }
 
         [HttpGet("{id:length(24)}")]
         public async Task<ActionResult<Report>> Get(string id)
         {
-            var report = await reportService.GetAsync(id);
+            var report = await reportService.GetOneAsync(id);
             if (report is null)
             {
                 return NotFound();
@@ -41,7 +48,7 @@ namespace WebApi.Controllers
         [HttpPut("{id:length(24)}")]
         public async Task<IActionResult> Update(string id, Report updatedReport)
         {
-            var report = await reportService.GetAsync(id);
+            var report = await reportService.GetOneAsync(id);
             if (report == null)
             {
                 return NotFound();
@@ -55,7 +62,7 @@ namespace WebApi.Controllers
         [HttpDelete("{id:length(24)}")]
         public async Task<IActionResult> Delete(string id)
         {
-            var report = await reportService.GetAsync(id);
+            var report = await reportService.GetOneAsync(id);
             if (report == null)
             {
                 return NotFound();
