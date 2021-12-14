@@ -1,8 +1,13 @@
-﻿namespace WebApi.Models
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
+namespace WebApi.Models
 {
     public class Report
     {
-        public Guid Id { get; set; }
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? Id { get; set; }
 
         public string ReportType { get; set; }
 
@@ -15,6 +20,15 @@
         public DateTime Modified { get; set; }
 
         public int Revision { get; set; }
+
+        public string Category { get; set; }
+
+        public string Subcategory { get; set; }
+
+        public string Detail { get; set; }
+
+        public List<string> Tags { get; private set; } 
+            = new List<string>(); 
 
         public string Description { get; set; }
     }
