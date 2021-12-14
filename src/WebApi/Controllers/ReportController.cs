@@ -8,7 +8,7 @@ using WebApi.Services;
 
 namespace WebApi.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ReportController : ControllerBase
