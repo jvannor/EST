@@ -4,7 +4,7 @@ using System.Web;
 using WebApi.Models;
 using WebApi.Services;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+// See: https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-mongo-app
 
 namespace WebApi.Controllers
 {
