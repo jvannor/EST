@@ -37,7 +37,7 @@ namespace Mobile
         private async void InvokeRestService_Clicked(object sender, EventArgs e)
         {
             var credentials = await authenticationService.GetCredentials();
-            var result = await genericRestService.Get<JsonArray>("https://api.dev.detroitcyclecar.com:6001/api/report/testuser01%40email.com", credentials.AccessToken);
+            var result = await genericRestService.Get<JsonArray>("https://api.dev.detroitcyclecar.com:6001/api/report", credentials.AccessToken);
         }
 
         private IAuthenticationService authenticationService;
