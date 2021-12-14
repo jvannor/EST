@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Web;
 using WebApi.Models;
+using WebApi.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -12,76 +13,58 @@ namespace WebApi.Controllers
     [ApiController]
     public class ReportController : ControllerBase
     {
-        // GET: api/<ReportController>/subject
-        [HttpGet("{subject}")]
-        public IEnumerable<Report> Get(
-            string subject, 
-            [FromQuery] DateTime? begin, 
-            [FromQuery] DateTime? end)
+        public ReportController(ReportService service) =>
+            reportService = service;
+
+        [HttpGet]
+        public async Task<List<Report>> Get() => await reportService.GetAsync();
+
+        [HttpGet("{id:length(24)}")]
+        public async Task<ActionResult<Report>> Get(string id)
         {
-            return new Report[] 
+            var report = await reportService.GetAsync(id);
+            if (report is null)
             {
-                new Report
-                {
-                    Id = new Guid("352e7bfe-ca8d-43cf-aced-1a421df06b24"),
-                    ReportType = "SeizureReport",
-                    Subject = HttpUtility.UrlDecode(subject),
-                    Author = HttpUtility.UrlDecode(subject),
-                    Created = begin != null ? (DateTime)begin : DateTime.UtcNow,
-                    Modified = begin != null ? (DateTime)begin : DateTime.UtcNow,
-                    Revision = 1,
-                    Description = "Seizure Report"
-                },
-                new Report
-                {
-                    Id = new Guid("d8e488c1-df39-4795-a647-db1b0cffd273"),
-                    ReportType = "SeizureReport",
-                    Subject = HttpUtility.UrlDecode(subject),
-                    Author = HttpUtility.UrlDecode(subject),
-                    Created = end != null ? (DateTime)end : DateTime.UtcNow,
-                    Modified = end != null ? (DateTime)end : DateTime.UtcNow,
-                    Revision = 1,
-                    Description = "Seizure Report"
-                }
-            };
+                return NotFound();
+            }
+
+            return report;
         }
 
-        // GET api/<ReportController>/subject/id
-        [HttpGet("{subject}/{id}")]
-        public Report Get(string subject, string id)
+        [HttpPost]
+        public async Task<IActionResult> Post(Report newReport)
         {
-            return new Report
+            await reportService.CreateAsync(newReport);
+            return CreatedAtAction(nameof(Get), new { id = newReport.Id }, newReport);
+        }
+
+        [HttpPut("{id:length(24)}")]
+        public async Task<IActionResult> Update(string id, Report updatedReport)
+        {
+            var report = await reportService.GetAsync(id);
+            if (report == null)
             {
-                Id = new Guid("92240664-6f84-46b9-affa-6f22e5b76951"),
-                ReportType = "SeizureReport",
-                Subject = HttpUtility.UrlDecode(subject),
-                Author = HttpUtility.UrlDecode(subject),
-                Created = DateTime.UtcNow,
-                Modified = DateTime.UtcNow,
-                Revision = 1,
-                Description = "Seizure Report"
-            };
+                return NotFound();
+            }
+
+            updatedReport.Id = report.Id;
+            await reportService.UpdateAsync(id, updatedReport);
+            return NoContent();
         }
 
-        // POST api/<ReportController>/subject
-        [HttpPost("{subject}")]
-        public void Post(string subject, [FromBody] string value)
+        [HttpDelete("{id:length(24)}")]
+        public async Task<IActionResult> Delete(string id)
         {
-            throw new NotImplementedException();
+            var report = await reportService.GetAsync(id);
+            if (report == null)
+            {
+                return NotFound();
+            }
+
+            await reportService.RemoveAsync(report.Id);
+            return NoContent();
         }
 
-        // PUT api/<ReportController>/subject
-        [HttpPut("{subject}")]
-        public void Put(string subject, [FromBody] string value)
-        {
-            throw new NotImplementedException();
-        }
-
-        // DELETE api/<ReportController>/subject/id
-        [HttpDelete("{subject}/{id}")]
-        public void Delete(string subject, string id)
-        {
-            throw new NotImplementedException();
-        }
+        private readonly ReportService reportService;
     }
 }

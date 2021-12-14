@@ -1,8 +1,15 @@
 using Microsoft.IdentityModel.Tokens;
+using WebApi.Models;
+using WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.Configure<WebApiDatabaseSettings>(
+    builder.Configuration.GetSection("WebApiDatabase"));
+
+builder.Services.AddSingleton<ReportService>();
 
 builder.Services.AddControllers();
 
