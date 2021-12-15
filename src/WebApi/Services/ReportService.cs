@@ -22,12 +22,13 @@ namespace WebApi.Services
         {
             var query = reportCollection.AsQueryable<Report>();
             if (!string.IsNullOrEmpty(subject))
-                query.Where(r => r.Subject == subject);
+                query = query.Where(r => r.Subject == subject);
             if (begin != null)
-                query.Where(r => r.Created >= begin);
+                query = query.Where(r => r.Created >= begin);
             if (end != null)
-                query.Where(r => r.Created < end);
-            return await query.ToListAsync();
+                query = query.Where(r => r.Created < end);
+            var result = await query.ToListAsync();
+            return result;
         }
 
         public async Task<Report?> GetOneAsync(string id) =>
