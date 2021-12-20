@@ -11,5 +11,9 @@ namespace Mobile.Views
         {
             InitializeComponent();
         }
+
+        void RefreshView_Refreshing(System.Object sender, System.EventArgs e)
+        {
+        }
     }
 }

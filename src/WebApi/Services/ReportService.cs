@@ -19,13 +19,13 @@ namespace WebApi.Services
         //public async Task<List<Report>> GetAsync() =>
         //    await reportCollection.Find(_ => true).ToListAsync();
         
-        public async Task<List<Report>> GetAsync(string subject, int page = 0)
+        public async Task<List<Report>> GetAsync(string subject, int page = 0, int size = 10)
         {
             var query = reportCollection.AsQueryable<Report>()
                 .Where(r => r.Subject == subject)
                 .OrderBy(r => r.Created)
-                .Skip(5 * page)
-                .Take(5);
+                .Skip(size * page)
+                .Take(size);
 
             var result = await query.ToListAsync();
             return result;
