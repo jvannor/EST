@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Mobile.Models;
+using Mobile.ServiceContracts;
 
 namespace Mobile.ViewModels
 {
@@ -38,13 +40,11 @@ namespace Mobile.ViewModels
             }
         }
                      
-        public ReportsViewModel()
+        public ReportsViewModel(IReportsDataService service)
         {
             System.Diagnostics.Debug.WriteLine("ReportsViewModel::ctor()");
             Title = "Reports";
-
-            AddTestData(20);
-            itemCount = 20;
+            reportsDataService = service;
         }
 
         public async void ExecuteRefreshCommand()
@@ -52,43 +52,13 @@ namespace Mobile.ViewModels
             Debug.WriteLine("ReportsViewModel::ExecuteRefreshCommand()");
             IsRefreshing = true;
 
-            Reports.Clear();
-            itemCount = 0;
-
-            AddTestData(20);
-            itemCount = 20;
-
             IsRefreshing = false;
         }
 
         public async void ExecuteLoadMoreDataCommand()
         {
             Debug.WriteLine("ReportsViewModel::ExecuteLoadMoreDataCommand()");
-            if (itemCount < maxItemCount)
-            {
-                AddTestData(20);
-                itemCount += 20;
-            }
-        }
-
-        private void AddTestData(int count)
-        {
-            var category = flip ? "Category" : "CATEGORY";
-            flip = !flip;
-
-            for (int i=0; i<count; i++)
-            {
-                var report = new Report();
-                report.ReportType = "Synthetic";
-                report.Created = report.Modified = DateTime.UtcNow;
-                report.Author = report.Subject = "tool@email.com";
-                report.Revision = 1;
-                report.Category = category;
-                report.Subcategory = "Subcategory";
-                report.Detail = "Detail";
-                report.Description = "Test";
-                Reports.Add(report);
-            }
+            var newReports = await reportsDataService.GetReports("jvannor@hotmail.com", 0, 10);
         }
 
         private ObservableCollection<Report> reports = new ObservableCollection<Report>();
@@ -96,7 +66,9 @@ namespace Mobile.ViewModels
         private bool isRefreshing = false;
         private int itemCount = 0;
         private bool flip = false;
-        const int maxItemCount = 100;
+        const int maxItemCount = 1000;
         const int pageSize = 10;
+
+        private IReportsDataService reportsDataService;
     }
 }
