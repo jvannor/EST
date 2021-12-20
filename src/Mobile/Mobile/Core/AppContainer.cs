@@ -4,6 +4,7 @@ using System.Text;
 using Autofac;
 using Mobile.ServiceContracts;
 using Mobile.Services;
+using Mobile.ViewModels;
 
 namespace Mobile.Core
 {
@@ -13,8 +14,18 @@ namespace Mobile.Core
         {
             var builder = new ContainerBuilder();
 
+            // view models
+            builder.RegisterType<LoadingViewModel>();
+            builder.RegisterType<LoginViewModel>();
+            builder.RegisterType<HomeViewModel>();
+            builder.RegisterType<ReportsViewModel>();
+            builder.RegisterType<ReportDetailViewModel>();
+            builder.RegisterType<SettingsViewModel>();
+            builder.RegisterType<TagsViewModel>();
+            builder.RegisterType<TemplatesViewModel>();
+
+            // services
             builder.RegisterType<AuthenticationService>().As<IAuthenticationService>();
-            builder.RegisterType<NavigationService>().As<INavigationService>();
             builder.RegisterType<GenericRestService>().As<IGenericRestService>();
 
             container = builder.Build();

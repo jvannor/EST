@@ -8,6 +8,8 @@ namespace Mobile.ServiceContracts
 {
     internal interface IAuthenticationService
     {
+        Task<bool> Authenticated();
+
         Task<bool> Login();
 
         Task<bool> Logout();
