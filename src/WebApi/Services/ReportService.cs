@@ -1,6 +1,7 @@
 using System.Linq;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using MongoDB.Driver.Core;
 using MongoDB.Driver.Linq;
 using WebApi.Models;
 
@@ -18,8 +19,20 @@ namespace WebApi.Services
         //public async Task<List<Report>> GetAsync() =>
         //    await reportCollection.Find(_ => true).ToListAsync();
         
-        public async Task<List<Report>> GetAsync(string? subject = null, DateTime? begin = null, DateTime? end = null)
+        public async Task<List<Report>> GetAsync(string subject, int page = 0)
         {
+            var query = reportCollection.AsQueryable<Report>()
+                .Where(r => r.Subject == subject)
+                .OrderBy(r => r.Created)
+                .Skip(5 * page)
+                .Take(5);
+
+            var result = await query.ToListAsync();
+            return result;
+        }
+
+        public async Task<List<Report>> GetAsync(string? subject = null, DateTime? begin = null, DateTime? end = null)
+        {           
             var query = reportCollection.AsQueryable<Report>();
             if (!string.IsNullOrEmpty(subject))
                 query = query.Where(r => r.Subject == subject);
@@ -27,6 +40,7 @@ namespace WebApi.Services
                 query = query.Where(r => r.Created >= begin);
             if (end != null)
                 query = query.Where(r => r.Created < end);
+            
             var result = await query.ToListAsync();
             return result;
         }

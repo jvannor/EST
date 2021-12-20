@@ -1,6 +1,8 @@
 ﻿using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Mobile.Core;
+using Mobile.ServiceContracts;
 
 namespace Mobile
 {
@@ -10,7 +12,7 @@ namespace Mobile
         {
             InitializeComponent();
 
-            MainPage = new MainPage();
+            MainPage = new AppShell();
         }
 
         protected override async void OnStart()

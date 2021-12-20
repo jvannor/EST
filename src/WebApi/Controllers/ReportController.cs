@@ -17,7 +17,15 @@ namespace WebApi.Controllers
             reportService = service;
 
         [HttpGet]
-        //public async Task<List<Report>> Get() => await reportService.GetAsync();
+        public async Task<List<Report>> Get(
+        [FromQuery]string subject,
+        [FromQuery]int page
+        )
+        {
+            return await reportService.GetAsync(subject, page);
+        }
+
+        [HttpGet]
         public async Task<List<Report>> Get(
         [FromQuery]string? subject,
         [FromQuery]DateTime? begin,
