@@ -8,24 +8,31 @@
     x:Class="Mobile.Views.ReportsView">
     <ContentPage.Content>
         <StackLayout Margin="16,8,16,0">
-            <CollectionView ItemsSource="{Binding Reports}" EmptyView="No items to display">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <Label Grid.Column="1" Grid.Row="0" Text="{Binding Category}" />
-                            <Label Grid.Column="1" Grid.Row="1" Text="{Binding Subcategory}" />
-                        </Grid>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+            <RefreshView
+                IsRefreshing="{Binding IsRefreshing}"
+                Command="{Binding RefreshCommand}">
+                <CollectionView ItemsSource="{Binding Reports}"
+                                EmptyView="No items to display"
+                                RemainingItemsThreshold="10"
+                                RemainingItemsThresholdReachedCommand="{Binding LoadMoreDataCommand}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="1" Grid.Row="0" Text="{Binding Category}" />
+                                <Label Grid.Column="1" Grid.Row="1" Text="{Binding Subcategory}" />
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </RefreshView>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
