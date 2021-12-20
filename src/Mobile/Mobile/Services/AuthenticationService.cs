@@ -85,10 +85,10 @@ namespace Mobile.Services
             var json = await SecureStorage.GetAsync("est.mobile.credentials");
             if (!string.IsNullOrEmpty(json))
             {
-                var credentials = JsonSerializer.Deserialize<Credentials>(json);
-                if (force || (DateTimeOffset.UtcNow.AddMinutes(15) >= credentials.AccessTokenExpiration))
+                result = JsonSerializer.Deserialize<Credentials>(json);
+                if (force || (DateTimeOffset.UtcNow.AddMinutes(15) >= result.AccessTokenExpiration))
                 {
-                    var refreshResult = await client.RefreshTokenAsync(credentials.RefreshToken);
+                    var refreshResult = await client.RefreshTokenAsync(result.RefreshToken);
                     if (!refreshResult.IsError)
                     {
                         result = refreshResult.ToCredentials();

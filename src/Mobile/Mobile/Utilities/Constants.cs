@@ -53,5 +53,7 @@ namespace Mobile.Utilities
         public const string PostLogoutRedirectUri = "est.mobile://signout-callback-oidc";
         public const string RedirectUri = "est.mobile://signin-oidc";
         public const string Scope = "openid profile email EST.WebApi offline_access";
+        public const string Api = "https://api.dev.detroitcyclecar.com:6001";
+        public const string ReportsApiEndpoint = "/api/report";
     }
 }
