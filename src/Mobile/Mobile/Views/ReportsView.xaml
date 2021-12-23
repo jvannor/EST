@@ -18,16 +18,19 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <Label Grid.Column="1" Grid.Row="0" Text="{Binding Category}" />
-                                <Label Grid.Column="1" Grid.Row="1" Text="{Binding Subcategory}" />
+                                <Label Grid.Column="0" Grid.Row="0" HorizontalTextAlignment="Start" Text="{Binding Created, StringFormat='{0:D}'}" />
+                                <Label Grid.Column="1" Grid.Row="0" HorizontalTextAlignment="End" Text="{Binding Created, StringFormat='{0:t}'}" />
+                                <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" Text="{Binding DisplayTags}" />
+                                <BoxView Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" HeightRequest="1" Color="Accent" />
                             </Grid>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>

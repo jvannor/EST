@@ -22,7 +22,6 @@ namespace Mobile.Services
             uriBuilder.Query = $"subject={subject}&page={page}&size={size}";
 
             var credentials = await authenticationService.GetCredentials();
-
             var reports = await genericRestService.Get<List<Report>>(uriBuilder.ToString(), credentials.AccessToken);
             return reports;
         }
