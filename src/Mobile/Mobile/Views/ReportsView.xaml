@@ -8,7 +8,6 @@
     x:Class="Mobile.Views.ReportsView">
     <ContentPage.Content>
         <StackLayout Margin="16,8,16,0">
-            <Button Text="Test" Command="{Binding TestCommand}"/>
             <RefreshView
                 IsRefreshing="{Binding IsRefreshing}"
                 Command="{Binding RefreshCommand}">
@@ -19,18 +18,19 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-                                <Label Grid.Row="0" Text="{Binding Id}" FontAttributes="Bold" />
-                                <Label Grid.Row="1" Text="{Binding Created}" />
-                                <Label Grid.Row="2" Text="{Binding Category}" />
-                                <Label Grid.Row="3" Text="{Binding Subcategory}" />
-                                <Label Grid.Row="4" Text="{Binding Detail}" />
+                                <Label Grid.Column="0" Grid.Row="0" HorizontalTextAlignment="Start" Text="{Binding Created, StringFormat='{0:D}'}" />
+                                <Label Grid.Column="1" Grid.Row="0" HorizontalTextAlignment="End" Text="{Binding Created, StringFormat='{0:t}'}" />
+                                <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" Text="{Binding DisplayTags}" />
+                                <BoxView Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" HeightRequest="1" Color="Accent" />
                             </Grid>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>

@@ -27,6 +27,8 @@ namespace WebApi.Models
 
         public string Detail { get; set; }
 
+        public DateTime Observed { get; set; } 
+
         public List<string> Tags { get; private set; } 
             = new List<string>(); 
 

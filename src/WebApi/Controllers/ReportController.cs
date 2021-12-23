@@ -26,17 +26,6 @@ namespace WebApi.Controllers
             return await reportService.GetAsync(subject, page, size);
         }
 
-        /*
-        [HttpGet]
-        public async Task<List<Report>> Get(
-        [FromQuery]string? subject,
-        [FromQuery]DateTime? begin,
-        [FromQuery]DateTime? end)
-        {
-            return await reportService.GetAsync(subject, begin, end);
-        }
-        */
-
         [HttpGet("{id:length(24)}")]
         public async Task<ActionResult<Report>> Get(string id)
         {

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Text.Json.Serialization;
 
 namespace Mobile.Models
@@ -39,6 +41,27 @@ namespace Mobile.Models
         [JsonPropertyName("tags")]
         public List<string> Tags { get; set; } =
             new List<string>();
+
+        [JsonIgnore]
+        public string DisplayTags
+        {
+            get
+            {
+                var builder = new StringBuilder();
+                var query = from tag in Tags
+                            orderby tag ascending
+                            select tag;
+
+                var prefix = string.Empty;
+                foreach(var tag in query)
+                {
+                    builder.AppendFormat("{0}{1}", prefix, tag);
+                    prefix = "; ";
+                }
+
+                return builder.ToString();
+            }
+        }
 
         [JsonPropertyName("description")]
         public string Description { get; set; }
