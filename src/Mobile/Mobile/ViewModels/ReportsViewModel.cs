@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Mobile.Models;
@@ -13,6 +14,7 @@ namespace Mobile.ViewModels
     {
         public Command LoadMoreDataCommand => new Command(ExecuteLoadMoreDataCommand);
         public Command RefreshCommand => new Command(ExecuteRefreshCommand);
+        public Command TestCommand => new Command(ExecuteTestCommand);
 
         public bool IsRefreshing
         {
@@ -49,26 +51,79 @@ namespace Mobile.ViewModels
 
         public async void ExecuteRefreshCommand()
         {
-            Debug.WriteLine("ReportsViewModel::ExecuteRefreshCommand()");
-            IsRefreshing = true;
+            try
+            {
+                if (IsBusy) return;
+                IsBusy = true;
+                IsRefreshing = true;
+                reportsDataFullyLoaded = false;
 
-            IsRefreshing = false;
+                Reports.Clear();
+                reportsIndex = 0;
+
+                var reports = await reportsDataService.GetReports("jvannor%40hotmail.com", reportsIndex / reportsPageSize, reportsPageSize);
+                foreach (var report in reports)
+                {
+                    Reports.Add(report);
+                    reportsIndex++;
+                }
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine($"ExecuteRefreshCommand() encountered an unexpected exception, {ex.GetType().Name}; {ex.Message}");
+            }
+            finally
+            {
+                IsRefreshing = false;
+                IsBusy = false;
+            }
         }
 
         public async void ExecuteLoadMoreDataCommand()
         {
-            Debug.WriteLine("ReportsViewModel::ExecuteLoadMoreDataCommand()");
-            var newReports = await reportsDataService.GetReports("jvannor@hotmail.com", 0, 10);
+            try
+            {
+                if (IsBusy) return;
+                if (reportsDataFullyLoaded) return;
+                IsBusy = true;
+
+                var reports = await reportsDataService.GetReports("jvannor%40hotmail.com", reportsIndex / reportsPageSize, reportsPageSize);
+                var count = reports.Count();
+                if (reportsIndex == ((reportsIndex / reportsPageSize) * reportsPageSize) + count)
+                {
+                    reportsDataFullyLoaded = true;
+                    return;
+                }
+
+                foreach(var report in reports)
+                {
+                    Reports.Add(report);
+                }
+                reportsIndex += count;
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine($"ExecuteLoadMoreDataCommand() encountered an unexpected exception, {ex.GetType().Name}; {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
-        private ObservableCollection<Report> reports = new ObservableCollection<Report>();
-
-        private bool isRefreshing = false;
-        private int itemCount = 0;
-        private bool flip = false;
-        const int maxItemCount = 1000;
-        const int pageSize = 10;
+        public async void ExecuteTestCommand()
+        {
+            Debug.WriteLine("ReportsViewModel::ExecuteTestCommand()");
+            var newReports = await reportsDataService.GetReports("jvannor%40hotmail.com", 0, 10);
+        }
 
         private IReportsDataService reportsDataService;
+
+        private ObservableCollection<Report> reports = new ObservableCollection<Report>();
+        private const int reportsPageSize = 10;
+        private int reportsIndex = 0;
+        private bool reportsDataFullyLoaded = false;
+
+        private bool isRefreshing = false;
     }
 }
