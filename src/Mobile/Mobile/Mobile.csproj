@@ -23,8 +23,10 @@
   <ItemGroup>
     <None Remove="Models\" />
     <None Remove="Xamarin.CommunityToolkit" />
+    <None Remove="Converters\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
+    <Folder Include="Converters\" />
   </ItemGroup>
 </Project>

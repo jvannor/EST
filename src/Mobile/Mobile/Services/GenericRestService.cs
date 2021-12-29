@@ -22,7 +22,7 @@ namespace Mobile.Services
             if (serviceResponse.IsSuccessStatusCode)
             {
                 var responseBody = await serviceResponse.Content.ReadAsStringAsync();
-                var result = JsonSerializer.Deserialize<T>(responseBody);
+                var result = JsonSerializer.Deserialize<T>(responseBody, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
                 return result;
             }
 

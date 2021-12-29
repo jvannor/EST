@@ -1,11 +1,17 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 <ContentPage
     xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:convert="clr-namespace:Mobile.Converters"
     xmlns:utilities="clr-namespace:Mobile.Utilities"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="{Binding Title}"
     utilities:ViewModelLocator.AutoWireViewModel="True"
     x:Class="Mobile.Views.ReportsView">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <convert:ListToStringConverter x:Key="listToString" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <ContentPage.Content>
         <StackLayout Margin="16,8,16,0">
             <RefreshView
@@ -26,11 +32,13 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-                                <Label Grid.Column="0" Grid.Row="0" HorizontalTextAlignment="Start" Text="{Binding Created, StringFormat='{0:D}'}" />
-                                <Label Grid.Column="1" Grid.Row="0" HorizontalTextAlignment="End" Text="{Binding Created, StringFormat='{0:t}'}" />
-                                <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" Text="{Binding DisplayTags}" />
-                                <BoxView Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" HeightRequest="1" Color="Accent" />
+                                <Label Grid.Column="0" Grid.Row="0" HorizontalTextAlignment="Start" Text="{Binding Observed, StringFormat='{0:D}'}" />
+                                <Label Grid.Column="1" Grid.Row="0" HorizontalTextAlignment="End" Text="{Binding Observed, StringFormat='{0:t}'}" />
+                                <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" Text="{Binding Category,StringFormat='{0} Seizure'}" />
+                                <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" Text="{Binding Tags, Converter={StaticResource listToString}}" />
+                                <BoxView Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" HeightRequest="1" Color="Accent" />
                             </Grid>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>

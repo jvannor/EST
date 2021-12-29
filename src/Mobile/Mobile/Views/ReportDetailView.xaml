@@ -9,6 +9,18 @@
     <ContentPage.Content>
         <StackLayout Margin="16,8,16,0">
             <Label Text="Report Detail" />
+            <Label Text="Date" />
+            <DatePicker Date="{Binding Date}" />
+            <Label Text="Time" />
+            <TimePicker Time="{Binding Time}" />
+            <Label Text="Category" />
+            <Picker Title="Category" ItemsSource="{Binding CategoryChoices}" SelectedItem="{Binding Category}" />
+            <Label Text="Subcategory" />
+            <Picker Title="Subcategory" ItemsSource="{Binding SubcategoryChoices}" SelectedItem="{Binding Subcategory}" />
+            <Label Text="Detail"/>
+            <Picker Title="Detail" ItemsSource="{Binding DetailChoices}" SelectedItem="{Binding Detail}" />
+            <Label Text="Description" />
+            <Editor Placeholder="Enter description here." Text="{Binding Description}" />
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
