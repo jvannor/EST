@@ -15,6 +15,7 @@ namespace Mobile.ViewModels
         public Command LoadMoreDataCommand => new Command(ExecuteLoadMoreDataCommand);
         public Command RefreshCommand => new Command(ExecuteRefreshCommand);
         public Command TestCommand => new Command(ExecuteTestCommand);
+        public Command GoToDetailsCommand => new Command(ExecuteGoToDetailsCommand);
 
         public bool IsRefreshing
         {
@@ -108,6 +109,15 @@ namespace Mobile.ViewModels
             finally
             {
                 IsBusy = false;
+            }
+        }
+
+        public async void ExecuteGoToDetailsCommand(object parameter)
+        {
+            var report = parameter as Report;
+            if (report != null)
+            {
+                await Shell.Current.GoToAsync($"reportdetail?Id={report.Id}");
             }
         }
 
