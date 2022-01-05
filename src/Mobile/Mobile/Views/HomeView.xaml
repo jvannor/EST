@@ -8,7 +8,6 @@
     x:Class="Mobile.Views.HomeView">
     <ContentPage.Content>
         <StackLayout Margin="16,8,16,0">
-            <Label Text="Home" />
             <Button Text="Execute Test" Command="{Binding TestCommand}" />
         </StackLayout>
     </ContentPage.Content>

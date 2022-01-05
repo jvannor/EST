@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using Mobile.ServiceContracts;
 using Mobile.Utilities;
 using Xamarin.Forms;
 
 namespace Mobile.ViewModels
 {
-    [QueryProperty(nameof(Id), "Id")]
-    internal class ReportDetailViewModel : ViewModelBase
+    internal class ReportDetailViewModel : ViewModelBase, IQueryAttributable
     {
         public string Id
         {
@@ -171,6 +172,19 @@ namespace Mobile.ViewModels
             }
         }
 
+        public ObservableCollection<string> Tags
+        {
+            get { return tags; }
+            set
+            {
+                if (tags == value)
+                    return;
+
+                tags = value;
+                OnPropertyChanged();
+            }
+        }
+
         public string Description
         {
             get { return description; }
@@ -184,7 +198,7 @@ namespace Mobile.ViewModels
             }
         }
 
-        public ReportDetailViewModel()
+        public ReportDetailViewModel(IReportsDataService service)
         {
             System.Diagnostics.Debug.WriteLine("ReportDetailsViewModel::ctor()");
             Title = "Report Detail";
@@ -197,7 +211,34 @@ namespace Mobile.ViewModels
 
             CategoryChoices = query1.ToList();
             Category = query1.First();
+
+            reportsDataService = service;
         }
+
+        public async void ApplyQueryAttributes(IDictionary<string, string> query)
+        {
+            if (query.ContainsKey("Id"))
+            {
+                var id = query["Id"];
+                if (!string.IsNullOrEmpty(id))
+                {
+                    var report = await reportsDataService.GetReport(id);
+                    if (report != null)
+                    {
+                        Id = report.Id;
+                        Date = report.Observed.ToLocalTime();
+                        Time = report.Observed.ToLocalTime().TimeOfDay;
+                        Category = report.Category;
+                        Subcategory = report.Subcategory;
+                        Detail = report.Detail;
+                        Tags = new ObservableCollection<string>(report.Tags);
+                        Description = report.Description;
+                    }
+                }
+            }
+        }
+
+        private IReportsDataService reportsDataService;
 
         private string id;
 
@@ -212,6 +253,8 @@ namespace Mobile.ViewModels
 
         private string detail;
         private List<string> detailChoices = new List<string>();
+
+        private ObservableCollection<string> tags = new ObservableCollection<string>();
 
         private string description;
     }

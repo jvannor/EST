@@ -17,7 +17,7 @@ namespace Mobile.ViewModels
         public async void ExecuteTestCommand()
         {
             System.Diagnostics.Debug.WriteLine("HomeViewModel::ExecuteTestCommand()");
-            await Shell.Current.GoToAsync("reportdetail?Id=42");
+            await Shell.Current.GoToAsync("reportdetail");
         }
     }
 }

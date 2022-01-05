@@ -24,9 +24,19 @@
     <None Remove="Models\" />
     <None Remove="Xamarin.CommunityToolkit" />
     <None Remove="Converters\" />
+    <None Remove="Resources\" />
+    <None Remove="Resources\Fonts\" />
+    <None Remove="Resources\Fonts\Font Awesome 5 Free-Solid-900.otf" />
+    <None Remove="Resources\Fonts\Font Awesome 5 Free-Regular-400.otf" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
     <Folder Include="Converters\" />
+    <Folder Include="Resources\" />
+    <Folder Include="Resources\Fonts\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Fonts\Font Awesome 5 Free-Solid-900.otf" />
+    <EmbeddedResource Include="Resources\Fonts\Font Awesome 5 Free-Regular-400.otf" />
   </ItemGroup>
 </Project>

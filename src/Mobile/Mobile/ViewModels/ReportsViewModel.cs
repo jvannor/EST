@@ -65,6 +65,11 @@ namespace Mobile.ViewModels
                 var reports = await reportsDataService.GetReports("jvannor%40hotmail.com", reportsIndex / reportsPageSize, reportsPageSize);
                 foreach (var report in reports)
                 {
+                    // local time adjustments
+                    report.Created = report.Created.ToLocalTime();
+                    report.Modified = report.Modified.ToLocalTime();
+                    report.Observed = report.Observed.ToLocalTime();
+
                     Reports.Add(report);
                     reportsIndex++;
                 }
@@ -98,6 +103,11 @@ namespace Mobile.ViewModels
 
                 foreach(var report in reports)
                 {
+                    // date time adjustments
+                    report.Created = report.Created.ToLocalTime();
+                    report.Modified = report.Modified.ToLocalTime();
+                    report.Observed = report.Observed.ToLocalTime();
+                    
                     Reports.Add(report);
                 }
                 reportsIndex += count;

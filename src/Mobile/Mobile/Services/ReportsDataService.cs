@@ -26,6 +26,15 @@ namespace Mobile.Services
             return reports;
         }
 
+        public async Task<Report> GetReport(string id)
+        {
+            var requestUri = $"{Constants.Api}{Constants.ReportsApiEndpoint}/{id}";
+
+            var credentials = await authenticationService.GetCredentials();
+            var report = await genericRestService.Get<Report>(requestUri, credentials.AccessToken);
+            return report;
+        }
+
         private IAuthenticationService authenticationService;
         private IGenericRestService genericRestService;
     }
