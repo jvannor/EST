@@ -157,6 +157,7 @@ namespace Mobile.ViewModels
 
         public async void ExecuteDeleteReport(ReportDetailViewModel model, Report report)
         {
+            await reportsDataService.DeleteReport(report.Id);
         }
         
 

@@ -53,6 +53,14 @@ namespace Mobile.Services
             return result;
         }
 
+        public async Task DeleteReport(string id)
+        {
+            var requestUri = $"{Constants.Api}{Constants.ReportsApiEndpoint}/{id}";
+
+            var credentials = await authenticationService.GetCredentials();
+            await genericRestService.Delete(requestUri, credentials.AccessToken);
+        }
+
         private IAuthenticationService authenticationService;
         private IGenericRestService genericRestService;
     }

@@ -9,8 +9,12 @@ namespace Mobile.ServiceContracts
     {
         Task<Report> GetReport(string id);
 
+        Task<Report> CreateReport(Report report);
+
         Task<IEnumerable<Report>> GetReports(string subject, int page = 0, int size = 10);
 
         Task<Report> UpdateReport(Report report);
+
+        Task DeleteReport(string id);
     }
 }

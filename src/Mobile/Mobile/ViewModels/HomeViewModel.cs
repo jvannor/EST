@@ -1,32 +1,63 @@
 ﻿using System;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Mobile.Models;
 using Mobile.ServiceContracts;
+using System.Web;
 
 namespace Mobile.ViewModels
 {
     internal class HomeViewModel : ViewModelBase
     {
         public Command TestCommand => new Command(ExecuteTestCommand);
+        public Command NewReportCommand => new Command(ExecuteNewReportCommand);
 
-        public HomeViewModel(ISettingsService settings) : base(settings)
+        public HomeViewModel(ISettingsService ss, IReportsDataService rds) : base(ss)
         {
-            System.Diagnostics.Debug.WriteLine("HomeViewModel::ctor()");
             Title = "Home";
+            reportDataService = rds;
 
             MessagingCenter.Subscribe<ReportDetailViewModel, Report>(this, "CreateReport", ExecuteCreateReport);
         }
 
         public async void ExecuteTestCommand()
         {
-            System.Diagnostics.Debug.WriteLine("HomeViewModel::ExecuteTestCommand()");
             await Shell.Current.GoToAsync("reportdetail");
+        }
+
+        public async void ExecuteNewReportCommand()
+        {
+            var userName = settingsService.UserName;
+            var timestamp = DateTime.Now.ToLocalTime();
+
+            var report = new Report
+            {
+                Id = string.Empty,
+                ReportType = "Seizure Report",
+                Author = userName,
+                Subject = userName,
+                Created = timestamp,
+                Modified = timestamp,
+                Revision = 1,
+                Observed = timestamp,
+                Category = "Unclassified",
+                Subcategory = "-",
+                Detail = "-",
+                Description = string.Empty
+            };
+
+            var reportJson = JsonSerializer.Serialize(report);
+            var encodedReport = HttpUtility.UrlEncode(reportJson);
+            await Shell.Current.GoToAsync($"reportdetail?report={encodedReport}");
         }
 
         public async void ExecuteCreateReport(ReportDetailViewModel model, Report report)
         {
+            await reportDataService.CreateReport(report);
         }
+
+        private IReportsDataService reportDataService;
     }
 }

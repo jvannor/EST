@@ -58,6 +58,9 @@
                 
                 <Label Text="Description" FontSize="13"/>
                 <Editor AutoSize="TextChanges" Placeholder="Enter description here."  Text="{Binding Description}" FontSize="16" />
+                <BoxView HeightRequest="8"/>
+
+                <Button Text="Delete" Command="{Binding DeleteCommand}"/>
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>
