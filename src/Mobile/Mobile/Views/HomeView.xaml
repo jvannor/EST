@@ -9,6 +9,7 @@
     <ContentPage.Content>
         <StackLayout Margin="16,8,16,0">
             <Button Text="Execute Test" Command="{Binding TestCommand}" />
+            <Button Text="Create New Report" Command="{Binding NewReportCommand}" />
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

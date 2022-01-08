@@ -15,6 +15,7 @@ namespace Mobile.ViewModels
     {
         public Command GoToTagsCommand => new Command(ExecuteGoToTagsCommand);
         public Command SaveCommand => new Command(ExecuteSaveCommand);
+        public Command DeleteCommand => new Command(ExecuteDeleteCommand);
 
         public string Id
         {
@@ -347,6 +348,33 @@ namespace Mobile.ViewModels
             else
             {
                 MessagingCenter.Send(this, "UpdateReport", report);
+            }
+
+            await Shell.Current.GoToAsync("..?");
+        }
+
+        public async void ExecuteDeleteCommand(object parameter)
+        {
+            var report = new Report
+            {
+                Id = Id,
+                ReportType = ReportType,
+                Author = Author,
+                Subject = Subject,
+                Created = Created,
+                Modified = Modified,
+                Revision = Revision,
+                Observed = Date + Time,
+                Category = Category,
+                Subcategory = Subcategory,
+                Detail = Detail,
+                Tags = new List<string>(Tags),
+                Description = Description
+            };
+
+            if (!string.IsNullOrEmpty(report.Id))
+            {
+                MessagingCenter.Send(this, "DeleteReport", report);
             }
 
             await Shell.Current.GoToAsync("..?");
