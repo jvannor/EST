@@ -9,12 +9,23 @@
     <ShellContent Route="login" ContentTemplate="{DataTemplate local:LoginView}" />
 
     <TabBar>
-        <ShellContent Title="Home" Route="home" ContentTemplate="{DataTemplate local:HomeView}" />
-        <ShellContent Title="Reports" Route="reports" ContentTemplate="{DataTemplate local:ReportsView}" />
+        <ShellContent Title="Home" Route="home" ContentTemplate="{DataTemplate local:HomeView}">
+            <ShellContent.Icon>
+                <FontImageSource FontFamily="FontAwesomeSolid" Glyph="home" />
+            </ShellContent.Icon>
+        </ShellContent>
+        <ShellContent Title="Reports" Route="reports" ContentTemplate="{DataTemplate local:ReportsView}">
+            <ShellContent.Icon>
+                <FontImageSource FontFamily="FontAwesomeSolid" Glyph="file-medical-alt" />
+            </ShellContent.Icon>
+        </ShellContent>
         <Tab Title="Settings">
-            <ShellContent Title="General" Route="settings" ContentTemplate="{DataTemplate local:SettingsView}" />
-            <ShellContent Title="Tags" Route="tags" ContentTemplate="{DataTemplate local:TagsView}" />
-            <ShellContent Title="Templates" Route="templates" ContentTemplate="{DataTemplate local:TemplatesView}" />
+            <Tab.Icon>
+                <FontImageSource FontFamily="FontAwesomeSolid" Glyph="cog"/>
+            </Tab.Icon>
+            <ShellContent Title="General" Route="settings" ContentTemplate="{DataTemplate local:SettingsView}"/>
+            <ShellContent Title="Tags" Route="tags" ContentTemplate="{DataTemplate local:TagsView}"/>
+            <ShellContent Title="Templates" Route="templates" ContentTemplate="{DataTemplate local:TemplatesView}"/>
         </Tab>
     </TabBar>
 </Shell>

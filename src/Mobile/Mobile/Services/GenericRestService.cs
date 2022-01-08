@@ -22,7 +22,7 @@ namespace Mobile.Services
             if (serviceResponse.IsSuccessStatusCode)
             {
                 var responseBody = await serviceResponse.Content.ReadAsStringAsync();
-                var result = JsonSerializer.Deserialize<T>(responseBody);
+                var result = JsonSerializer.Deserialize<T>(responseBody, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
                 return result;
             }
 
@@ -39,9 +39,30 @@ namespace Mobile.Services
             throw new NotImplementedException();
         }
 
-        public Task<T> Put<T>(string uri, T data, string authToken = "")
+        public async Task<T> Put<T>(string uri, T data, string authToken = "")
         {
-            throw new NotImplementedException();
+            client.DefaultRequestHeaders.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            if (!string.IsNullOrEmpty(authToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+            }
+
+            var dataJson = JsonSerializer.Serialize<T>(data);
+            var stringContent = new StringContent(dataJson);
+            stringContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            var serviceResponse = await client.PutAsync(uri, stringContent);
+            if (serviceResponse.IsSuccessStatusCode)
+            {
+                var responseBody = await serviceResponse.Content.ReadAsStringAsync();
+                //var result = JsonSerializer.Deserialize<T>(responseBody, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+                //return result;
+                return data;
+            }
+
+            throw new HttpRequestException($"HTTP error, {serviceResponse.StatusCode}");
+
         }
 
         public Task Delete(string uri, string authToken = "")

@@ -6,9 +6,59 @@
     Title="{Binding Title}"
     utilities:ViewModelLocator.AutoWireViewModel="True"
     x:Class="Mobile.Views.ReportDetailView">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Save" Command="{Binding SaveCommand}" />
+    </ContentPage.ToolbarItems>
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior TextOverride="Cancel"/>
+    </Shell.BackButtonBehavior>
     <ContentPage.Content>
-        <StackLayout Margin="16,8,16,0">
-            <Label Text="Report Detail" />
-        </StackLayout>
+        <ScrollView VerticalScrollBarVisibility="Never" Padding="16">
+            <StackLayout>
+                <Label Text="Date" FontSize="13" />
+                <DatePicker Date="{Binding Date}" Format="D" FontSize="16" />
+                <BoxView HeightRequest="8"/>
+
+                <Label Text="Time" FontSize="13" />
+                <TimePicker Time="{Binding Time}" />
+                <BoxView HeightRequest="8"/>
+
+                <Label Text="Category" FontSize="13" />
+                <Picker Title="Category" ItemsSource="{Binding CategoryChoices}" SelectedItem="{Binding Category}" FontSize="16" />
+                <BoxView HeightRequest="8"/>
+
+                <Label Text="Subcategory" FontSize="13" />
+                <Picker Title="Subcategory" ItemsSource="{Binding SubcategoryChoices}" SelectedItem="{Binding Subcategory}" FontSize="16" />
+                <BoxView HeightRequest="8"/>
+
+                <Label Text="Detail" FontSize="13"/>
+                <Picker Title="Detail" ItemsSource="{Binding DetailChoices}" SelectedItem="{Binding Detail}" FontSize="16"/>
+                <BoxView HeightRequest="8"/>
+
+                <Label Text="Tags" FontSize="13">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoToTagsCommand}"/>
+                    </Label.GestureRecognizers>
+                </Label>
+                <FlexLayout BindableLayout.ItemsSource="{Binding Tags}" Direction="Row" JustifyContent="Start" Wrap="Wrap">
+                    <FlexLayout.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoToTagsCommand}" />
+                    </FlexLayout.GestureRecognizers>
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <Frame HasShadow="False" Padding="0,0,8,8">
+                                <Frame BorderColor="{StaticResource DarkPrimaryColor}" BackgroundColor="{StaticResource LightPrimaryColor}" HasShadow="False" Padding="8,4,8,4">
+                                    <Label Text="{Binding}" FontSize="13"/>
+                                </Frame>
+                            </Frame>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
+                <BoxView HeightRequest="8"/>
+                
+                <Label Text="Description" FontSize="13"/>
+                <Editor AutoSize="TextChanges" Placeholder="Enter description here."  Text="{Binding Description}" FontSize="16" />
+            </StackLayout>
+        </ScrollView>
     </ContentPage.Content>
 </ContentPage>

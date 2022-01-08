@@ -1,41 +1,55 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 <ContentPage
     xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:convert="clr-namespace:Mobile.Converters"
     xmlns:utilities="clr-namespace:Mobile.Utilities"
+    xmlns:vm="clr-namespace:Mobile.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="{Binding Title}"
     utilities:ViewModelLocator.AutoWireViewModel="True"
     x:Class="Mobile.Views.ReportsView">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <convert:ListToStringConverter x:Key="listToString" />
+            <convert:DateTimeToFriendlyString x:Key="dateTimeToFriendlyString" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <ContentPage.Content>
-        <StackLayout Margin="16,8,16,0">
-            <RefreshView
-                IsRefreshing="{Binding IsRefreshing}"
-                Command="{Binding RefreshCommand}">
-                <CollectionView ItemsSource="{Binding Reports}"
-                                EmptyView="No items to display"
-                                RemainingItemsThreshold="10"
-                                RemainingItemsThresholdReachedCommand="{Binding LoadMoreDataCommand}">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <Label Grid.Column="0" Grid.Row="0" HorizontalTextAlignment="Start" Text="{Binding Created, StringFormat='{0:D}'}" />
-                                <Label Grid.Column="1" Grid.Row="0" HorizontalTextAlignment="End" Text="{Binding Created, StringFormat='{0:t}'}" />
-                                <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" Text="{Binding DisplayTags}" />
-                                <BoxView Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" HeightRequest="1" Color="Accent" />
-                            </Grid>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </RefreshView>
-        </StackLayout>
+        <RefreshView IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshCommand}" Margin="8">
+            <CollectionView ItemsSource="{Binding Reports}" EmptyView="No items to display" RemainingItemsThreshold="10" RemainingItemsThresholdReachedCommand="{Binding LoadMoreDataCommand}" VerticalScrollBarVisibility="Never">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="8"/>
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BorderColor="{StaticResource DividerColor}" HasShadow="False" Padding="8">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ReportsViewModel}}, Path=GoToDetailsCommand}"
+                                    CommandParameter="{Binding .}"/>
+                            </Frame.GestureRecognizers>
+                            <StackLayout>
+                                <StackLayout Orientation="Horizontal">
+                                    <Label Text="{Binding Observed, Converter={StaticResource dateTimeToFriendlyString}}" FontSize="16"/>
+                                    <Label Text="{Binding Observed, StringFormat='{0:t}'}" FontSize="16" HorizontalOptions="EndAndExpand"/>
+                                </StackLayout>
+                                <Label Text="{Binding Category}" FontSize="13"/>
+                                <FlexLayout BindableLayout.ItemsSource="{Binding Tags}" Direction="Row" JustifyContent="Start" Wrap="Wrap">
+                                    <BindableLayout.ItemTemplate>
+                                        <DataTemplate>
+                                            <Frame HasShadow="False" Padding="0,0,8,8">
+                                                <Frame BorderColor="{StaticResource DarkPrimaryColor}" BackgroundColor="{StaticResource LightPrimaryColor}" HasShadow="False" Padding="8,4,8,4">
+                                                    <Label Text="{Binding}" FontSize="13"/>
+                                                </Frame>
+                                            </Frame>
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+                                </FlexLayout>
+                            </StackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
     </ContentPage.Content>
 </ContentPage>

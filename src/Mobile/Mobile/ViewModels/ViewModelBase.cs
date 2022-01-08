@@ -24,6 +24,11 @@ namespace Mobile.ViewModels
             set { SetProperty(ref title, value); }
         }
 
+        public ViewModelBase(ISettingsService settings)
+        {
+            settingsService = settings;
+        }
+
         protected bool SetProperty<T>(ref T backingStore, T value,
             [CallerMemberName] string propertyName = "",
             Action onChanged = null)
@@ -46,6 +51,7 @@ namespace Mobile.ViewModels
             changed.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        protected readonly ISettingsService settingsService;
         private bool isBusy = false;
         private string title = string.Empty;
     }

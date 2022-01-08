@@ -14,7 +14,7 @@ namespace Mobile.Services
 {
     internal class AuthenticationService : IAuthenticationService
     {
-        public AuthenticationService()
+        public AuthenticationService(ISettingsService settings)
         {
             client = new OidcClient(new OidcClientOptions()
             {
@@ -25,6 +25,8 @@ namespace Mobile.Services
                 RedirectUri = Constants.RedirectUri,
                 Scope = Constants.Scope
             });
+
+            settingsService = settings;
         }
 
         public async Task<bool> Authenticated()
@@ -48,6 +50,7 @@ namespace Mobile.Services
             var loginResult = await client.LoginAsync();
             if (!loginResult.IsError)
             {
+                settingsService.UserName = loginResult?.User?.Identity?.Name;
                 var credentials = loginResult.ToCredentials();
                 var json = JsonSerializer.Serialize(credentials);
                 await SecureStorage.SetAsync("est.mobile.credentials", json);
@@ -66,6 +69,7 @@ namespace Mobile.Services
                 var logoutResult = await client.LogoutAsync(new LogoutRequest { IdTokenHint = credentials.IdentityToken });
                 if (!logoutResult.IsError)
                 {
+                    settingsService.UserName = string.Empty;
                     SecureStorage.Remove("est.mobile.credentials");
                     result = true;
                 }
@@ -101,5 +105,6 @@ namespace Mobile.Services
         }
 
         private OidcClient client;
+        private readonly ISettingsService settingsService;
     }
 }

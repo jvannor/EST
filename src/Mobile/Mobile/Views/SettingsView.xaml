@@ -8,7 +8,6 @@
     x:Class="Mobile.Views.SettingsView">
     <ContentPage.Content>
         <StackLayout Margin="16,8,16,0">
-            <Label Text="Settings"/>
             <Button Text="Logout" Command="{Binding LogoutCommand}" />
         </StackLayout>
     </ContentPage.Content>

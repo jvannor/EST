@@ -6,47 +6,46 @@ namespace Mobile.Utilities
 {
     internal class Constants
     {
-        // id, name, parent 
-        public static readonly (int, string, int)[] SeizureReportClassifications =
-        {
-            (1, "Focal Onset", 0),
-            (2, "Generalized Onset", 0),
-            (3, "Unknown Onset", 0),
-            (4, "Unclassified", 0),
-            (5, "Focal to Bilateral Tonic-Clonic", 0),
-            (6, "Motor Onset", 1),
-            (7, "Nonmotor Onset", 1),
-            (8, "Motor", 2),
-            (9, "Nonmotor (absence)", 2),
-            (10, "Motor", 3),
-            (11, "Nonmotor", 3),
-            (12, "Automatisms", 6),
-            (13, "Atonic", 6),
-            (14, "Clonic", 6),
-            (15, "Epileptic Spasms", 6),
-            (16, "Hyperkinetic", 6),
-            (17, "Myoclonic", 6),
-            (18, "Tonic", 6),
-            (19, "Autonomic", 7),
-            (20, "Behavior Arrest", 7),
-            (21, "Cognitive", 7),
-            (22, "Emotional", 7),
-            (23, "Sensory", 7),
-            (24, "Tonic-Clonic", 8),
-            (25, "Clonic", 8),
-            (26, "Tonic", 8),
-            (27, "Myoclonic", 8),
-            (28, "Myoclonic-Tonic-Clonic", 8),
-            (29, "Myoclonic-Atonic", 8),
-            (30, "Epilieptic Spasms", 8),
-            (31, "Typical", 9),
-            (32, "Atypical", 9),
-            (33, "Myclonic", 9),
-            (34, "Eyelid Myclonia", 9),
-            (35, "Tonic-Clonic", 10),
-            (36, "Epilpetic Spsams", 10),
-            (37, "Behavior Arrest", 11)
-        };
+        public static readonly Tree<string> SeizureClassifications = new Tree<string> { Value = "root" }.AddMultiple(
+            new Tree<string> { Value = "Unclassified" }.AddMultiple(
+                new Tree<string> { Value = "-" }.AddMultiple (
+                    new Tree<string> { Value = "-" })),
+            new Tree<string> { Value = "Unknown Onset" }.AddMultiple(
+                new Tree<string> { Value = "Motor" }.AddMultiple(
+                    new Tree<string> { Value = "Tonic-Clonic" },
+                    new Tree<string> { Value = "Epileptic Spasms" }),
+                new Tree<string> { Value = "Nonmotor" }.AddMultiple(
+                    new Tree<string> { Value = "Behavior Arrest" })),
+            new Tree<string> { Value = "Focal Onset" }.AddMultiple(
+                new Tree<string> { Value = "Motor Onset" }.AddMultiple(
+                    new Tree<string> { Value = "Automatisms" },
+                    new Tree<string> { Value = "Atonic" },
+                    new Tree<string> { Value = "Clonic" },
+                    new Tree<string> { Value = "Epileptic Spasms" },
+                    new Tree<string> { Value = "Hyperkinetic" },
+                    new Tree<string> { Value = "Myoclonic" },
+                    new Tree<string> { Value = "Tonic" }),
+                new Tree<string> { Value = "Nonmotor Onset" }.AddMultiple(
+                    new Tree<string> { Value = "Autonomic" },
+                    new Tree<string> { Value = "Behavior Arrest" },
+                    new Tree<string> { Value = "Cognitive" },
+                    new Tree<string> { Value = "Emotional" },
+                    new Tree<string> { Value = "Sensory" })),
+            new Tree<string> { Value = "Generalized Onset" }.AddMultiple(
+                new Tree<string> { Value = "Motor" }.AddMultiple(
+                    new Tree<string> { Value = "Tonic-Clonic" },
+                    new Tree<string> { Value = "Clonic" },
+                    new Tree<string> { Value = "Tonic" },
+                    new Tree<string> { Value = "Myoclonic" },
+                    new Tree<string> { Value = "Myoclonic-Tonic-Clonic" },
+                    new Tree<string> { Value = "Myoclonic-Atonic" },
+                    new Tree<string> { Value = "Atonic" },
+                    new Tree<string> { Value = "Epileptic Spasms" }),
+                new Tree<string> { Value = "Nonmotor (Absence)" }.AddMultiple(
+                    new Tree<string> { Value = "Typical" },
+                    new Tree<string> { Value = "Atypical" },
+                    new Tree<string> { Value = "Myclonic" },
+                    new Tree<string> { Value = "Eyelid Myoclonia" })));
 
         public const string Authority = "https://identity.dev.detroitcyclecar.com:5001";
         public const string ClientId = "EST.Mobile";

@@ -15,6 +15,24 @@ namespace Mobile.Services
             genericRestService = service;
         }
 
+        public async Task<Report> CreateReport(Report report)
+        {
+            var requestUri = $"{Constants.Api}{Constants.ReportsApiEndpoint}";
+
+            var credentials = await authenticationService.GetCredentials();
+            var result = await genericRestService.Post<Report>(requestUri, report, credentials.AccessToken);
+            return result;
+        }
+
+        public async Task<Report> GetReport(string id)
+        {
+            var requestUri = $"{Constants.Api}{Constants.ReportsApiEndpoint}/{id}";
+
+            var credentials = await authenticationService.GetCredentials();
+            var result = await genericRestService.Get<Report>(requestUri, credentials.AccessToken);
+            return result;
+        }
+
         public async Task<IEnumerable<Report>> GetReports(string subject, int page = 0, int size = 10)
         {
             var uriBuilder = new UriBuilder(Constants.Api);
@@ -24,6 +42,15 @@ namespace Mobile.Services
             var credentials = await authenticationService.GetCredentials();
             var reports = await genericRestService.Get<List<Report>>(uriBuilder.ToString(), credentials.AccessToken);
             return reports;
+        }
+
+        public async Task<Report> UpdateReport(Report report)
+        {
+            var requestUri = $"{Constants.Api}{Constants.ReportsApiEndpoint}/{report.Id}";
+
+            var credentials = await authenticationService.GetCredentials();
+            var result = await genericRestService.Put<Report>(requestUri, report, credentials.AccessToken);
+            return result;
         }
 
         private IAuthenticationService authenticationService;
