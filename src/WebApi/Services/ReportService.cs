@@ -23,7 +23,7 @@ namespace WebApi.Services
         {
             var query = reportCollection.AsQueryable<Report>()
                 .Where(r => r.Subject == subject)
-                .OrderBy(r => r.Observed)
+                .OrderByDescending(r => r.Observed)
                 .Skip(size * page)
                 .Take(size);
 
