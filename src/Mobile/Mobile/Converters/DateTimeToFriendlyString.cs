@@ -9,7 +9,7 @@ namespace Mobile.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var source = (DateTime)value;
-            var diff = (DateTime.Now - source).Days;
+            var diff = (DateTime.Now.Date - source.Date).Days;
 
             var result = string.Format("{0:d}", source);
             if (diff == 0)

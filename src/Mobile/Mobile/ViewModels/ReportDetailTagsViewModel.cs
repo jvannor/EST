@@ -42,6 +42,9 @@ namespace Mobile.ViewModels
         public ReportDetailTagsViewModel(ISettingsService settings) : base(settings)
         {
             Title = "Tags";
+
+            tags = new ObservableCollection<string>(settings.DefaultTags);
+            selectedTags = new ObservableCollection<object>();
         }
 
         public void ApplyQueryAttributes(IDictionary<string, string> query)
@@ -52,11 +55,8 @@ namespace Mobile.ViewModels
                 if (!string.IsNullOrEmpty(encodedSelectedTags))
                 {
                     var selectedTagsJson = HttpUtility.UrlDecode(encodedSelectedTags);
-                    var newSelectedTags = JsonSerializer.Deserialize<string[]>(selectedTagsJson);
-                    var newTags = tags.Union(newSelectedTags);
-
-                    Tags = new ObservableCollection<string>(newTags);
-                    SelectedTags = new ObservableCollection<object>(newSelectedTags);
+                    var selectedTags = JsonSerializer.Deserialize<string[]>(selectedTagsJson);
+                    SelectedTags = new ObservableCollection<object>(selectedTags);
                 }
             }
         }
@@ -70,7 +70,7 @@ namespace Mobile.ViewModels
             await Shell.Current.GoToAsync($"..?");
         }
 
-        private ObservableCollection<object> selectedTags = new ObservableCollection<object>();
-        private ObservableCollection<string> tags = new ObservableCollection<string>();
+        private ObservableCollection<object> selectedTags;
+        private ObservableCollection<string> tags;
     }
 }

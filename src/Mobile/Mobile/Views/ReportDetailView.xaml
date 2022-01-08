@@ -40,7 +40,7 @@
                         <TapGestureRecognizer Command="{Binding GoToTagsCommand}"/>
                     </Label.GestureRecognizers>
                 </Label>
-                <FlexLayout BindableLayout.ItemsSource="{Binding Tags}" Direction="Row" JustifyContent="Start" Wrap="Wrap">
+                <FlexLayout BindableLayout.ItemsSource="{Binding Tags}" BindableLayout.EmptyView="None" Direction="Row" JustifyContent="Start" Wrap="Wrap">
                     <FlexLayout.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding GoToTagsCommand}" />
                     </FlexLayout.GestureRecognizers>
@@ -60,7 +60,31 @@
                 <Editor AutoSize="TextChanges" Placeholder="Enter description here."  Text="{Binding Description}" FontSize="16" />
                 <BoxView HeightRequest="8"/>
 
-                <Button Text="Delete" Command="{Binding DeleteCommand}"/>
+                <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
+                   <Frame BorderColor="{StaticResource DarkPrimaryColor}" HasShadow="False" Padding="8,4,8,4">
+                        <Label Text="Cancel">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding CancelCommand}" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Frame>
+                    <Frame BorderColor="{StaticResource DarkPrimaryColor}" HasShadow="False" Padding="8,4,8,4">
+                        <Label Text="Delete">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding DeleteCommand}" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Frame>
+                    <Frame BorderColor="{StaticResource DarkPrimaryColor}" HasShadow="False" Padding="8,4,8,4">
+                        <Label Text="Save">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SaveCommand}"/>
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Frame>
+
+                </StackLayout>
+                
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>

@@ -32,21 +32,9 @@ namespace Mobile.ViewModels
             var userName = settingsService.UserName;
             var timestamp = DateTime.Now.ToLocalTime();
 
-            var report = new Report
-            {
-                Id = string.Empty,
-                ReportType = "Seizure Report",
-                Author = userName,
-                Subject = userName,
-                Created = timestamp,
-                Modified = timestamp,
-                Revision = 1,
-                Observed = timestamp,
-                Category = "Unclassified",
-                Subcategory = "-",
-                Detail = "-",
-                Description = string.Empty
-            };
+            var report = new Report(settingsService.DefaultReportTemplate);
+            report.Author = report.Subject = settingsService.UserName;
+            report.Created = report.Modified = report.Observed = DateTime.Now.ToLocalTime();
 
             var reportJson = JsonSerializer.Serialize(report);
             var encodedReport = HttpUtility.UrlEncode(reportJson);
