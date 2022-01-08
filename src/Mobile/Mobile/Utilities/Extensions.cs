@@ -15,7 +15,7 @@ namespace Mobile.Utilities
                 AccessToken = loginResult.AccessToken,
                 IdentityToken = loginResult.IdentityToken,
                 RefreshToken = loginResult.RefreshToken,
-                AccessTokenExpiration = loginResult.AccessTokenExpiration
+                AccessTokenExpiration = loginResult.AccessTokenExpiration,
             };
 
         public static Credentials ToCredentials(this RefreshTokenResult refreshTokenResult)

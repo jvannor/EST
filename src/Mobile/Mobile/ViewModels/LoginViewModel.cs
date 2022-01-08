@@ -10,7 +10,7 @@ namespace Mobile.ViewModels
     {
         public Command LoginCommand => new Command(OnLogin);
 
-        public LoginViewModel(IAuthenticationService authentication) 
+        public LoginViewModel(ISettingsService settings, IAuthenticationService authentication) : base(settings)
         {
             authenticationService = authentication;
         }

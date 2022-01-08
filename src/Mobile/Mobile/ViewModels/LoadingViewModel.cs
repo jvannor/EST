@@ -9,7 +9,7 @@ namespace Mobile.ViewModels
     {
         public Command AppearingCommand => new Command(ExecuteAppearingCommand);
 
-        public LoadingViewModel(IAuthenticationService authentication)
+        public LoadingViewModel(ISettingsService settings, IAuthenticationService authentication) : base(settings)
         {
             authenticationService = authentication;
         }

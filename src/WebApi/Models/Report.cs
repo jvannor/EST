@@ -29,8 +29,7 @@ namespace WebApi.Models
 
         public DateTime Observed { get; set; } 
 
-        public List<string> Tags { get; private set; } 
-            = new List<string>(); 
+        public List<string> Tags { get; set; } 
 
         public string Description { get; set; }
     }

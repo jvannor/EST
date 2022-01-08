@@ -7,13 +7,16 @@
     utilities:ViewModelLocator.AutoWireViewModel="True"
     x:Class="Mobile.Views.ReportDetailView">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="OK" />
+        <ToolbarItem Text="Save" Command="{Binding SaveCommand}" />
     </ContentPage.ToolbarItems>
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior TextOverride="Cancel"/>
+    </Shell.BackButtonBehavior>
     <ContentPage.Content>
         <ScrollView VerticalScrollBarVisibility="Never" Padding="16">
             <StackLayout>
                 <Label Text="Date" FontSize="13" />
-                <DatePicker Date="{Binding Date}" FontSize="16" />
+                <DatePicker Date="{Binding Date}" Format="D" FontSize="16" />
                 <BoxView HeightRequest="8"/>
 
                 <Label Text="Time" FontSize="13" />
@@ -32,8 +35,15 @@
                 <Picker Title="Detail" ItemsSource="{Binding DetailChoices}" SelectedItem="{Binding Detail}" FontSize="16"/>
                 <BoxView HeightRequest="8"/>
 
-                <Label Text="Tags" FontSize="13"/>
+                <Label Text="Tags" FontSize="13">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoToTagsCommand}"/>
+                    </Label.GestureRecognizers>
+                </Label>
                 <FlexLayout BindableLayout.ItemsSource="{Binding Tags}" Direction="Row" JustifyContent="Start" Wrap="Wrap">
+                    <FlexLayout.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoToTagsCommand}" />
+                    </FlexLayout.GestureRecognizers>
                     <BindableLayout.ItemTemplate>
                         <DataTemplate>
                             <Frame HasShadow="False" Padding="0,0,8,8">

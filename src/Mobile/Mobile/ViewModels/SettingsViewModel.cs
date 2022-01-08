@@ -8,7 +8,7 @@ namespace Mobile.ViewModels
     {
         public Command LogoutCommand => new Command(ExecuteLogoutCommand);
 
-        public SettingsViewModel(IAuthenticationService authentication)
+        public SettingsViewModel(ISettingsService settings, IAuthenticationService authentication) : base(settings)
         {
             System.Diagnostics.Debug.WriteLine("SettingsViewModel::ctor()");
             authenticationService = authentication;
