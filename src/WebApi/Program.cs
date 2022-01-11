@@ -10,6 +10,7 @@ builder.Services.Configure<WebApiDatabaseSettings>(
     builder.Configuration.GetSection("WebApiDatabase"));
 
 builder.Services.AddSingleton<ReportService>();
+builder.Services.AddSingleton<SettingsService>();
 
 builder.Services.AddControllers();
 
