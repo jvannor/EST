@@ -9,6 +9,9 @@ namespace WebApi.Controllers
     [ApiController]
     public class SettingsController : ControllerBase
     {
+        public SettingsController(SettingsService service) =>
+            settingsService = service;
+
         [HttpGet("{id:length(24)}")]
         public async Task<ActionResult<SettingsDocument>> Get(string id)
         {
