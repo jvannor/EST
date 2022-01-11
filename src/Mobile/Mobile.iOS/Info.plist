@@ -22,8 +22,6 @@
 	</array>
 	<key>MinimumOSVersion</key>
 	<string>8.0</string>
-	<key>CFBundleDisplayName</key>
-	<string>Mobile</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.companyname.Mobile</string>
 	<key>CFBundleVersion</key>
@@ -49,5 +47,7 @@
 	</array>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
+	<key>CFBundleDisplayName</key>
+	<string>EST</string>
 </dict>
 </plist>

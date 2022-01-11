@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Xamarin.Essentials;
 using Mobile.Models;
 using Mobile.ServiceContracts;
+using System.Collections.ObjectModel;
 
 namespace Mobile.Services
 {
@@ -45,7 +46,8 @@ namespace Mobile.Services
             Category = "Unclassified",
             Subcategory = "-",
             Detail = "-",
-            Description = string.Empty
+            Description = string.Empty,
+            Tags = new ObservableCollection<string>()
         };
 
         private readonly List<string> defaultTags = new List<string>
@@ -53,7 +55,7 @@ namespace Mobile.Services
             "Reflexive",
             "Sound",
             "Proprioceptive",
-            "Episode",
+            "Knee Buckling",
             "Electric",
             "One Second",
             "Two Seconds",

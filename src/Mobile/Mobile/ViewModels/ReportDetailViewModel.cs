@@ -13,6 +13,8 @@ namespace Mobile.ViewModels
 {
     internal class ReportDetailViewModel : ViewModelBase, IQueryAttributable
     {
+        #region Properties
+
         public Command GoToTagsCommand => new Command(ExecuteGoToTagsCommand);
         public Command CancelCommand => new Command(ExecuteCancelCommand);
         public Command DeleteCommand => new Command(ExecuteDeleteCommand);
@@ -20,137 +22,140 @@ namespace Mobile.ViewModels
 
         public string Id
         {
-            get { return id;  }
+            get
+            {
+                return id;
+            }
+
             set
             {
-                if (string.Compare(id, value) != 0)
-                {
-                    id = value;
-                    OnPropertyChanged();
-                }
+                SetProperty(ref id, value);
             }
         }
 
         public string ReportType
         {
-            get { return reportType; }
+            get
+            {
+                return reportType;
+            }
+
             set
             {
-                if (string.Compare(reportType, value) != 0)
-                {
-                    reportType = value;
-                    OnPropertyChanged();
-                }
+                SetProperty(ref reportType, value);
             }
         }
 
         public string Author
         {
-            get { return author; }
+            get
+            {
+                return author;
+            }
+
             set
             {
-                if (string.Compare(author, value) != 0)
-                {
-                    author = value;
-                    OnPropertyChanged();
-                }
+                SetProperty(ref author, value);
             }
         }
 
         public string Subject
         {
-            get { return subject; }
+            get
+            {
+                return subject;
+            }
+
             set
             {
-                if (string.Compare(subject, value) != 0)
-                {
-                    subject = value;
-                    OnPropertyChanged();
-                }
+                SetProperty(ref subject, value);
             }
         }
 
         public DateTime Created
         {
-            get { return created; }
+            get
+            {
+                return created;
+            }
+
             set
             {
-                if (created != value)
-                {
-                    created = value;
-                    OnPropertyChanged();
-                }
+                SetProperty(ref created, value);
             }
         }
 
         public DateTime Modified
         {
-            get { return modified; }
+            get
+            {
+                return modified;
+            }
+
             set
             {
-                if (modified != value)
-                {
-                    modified = value;
-                    OnPropertyChanged();
-                }
+                SetProperty(ref modified, value);
             }
         }
 
         public int Revision
         {
-            get { return revision; }
+            get
+            {
+                return revision;
+            }
             set
             {
-                if (revision != value)
-                {
-                    revision = value;
-                    OnPropertyChanged();
-                }
+                SetProperty(ref revision, value);
             }
         }
 
         public DateTime Observed
         {
-            get { return observed; }
+            get
+            {
+                return observed;
+            }
+
             set
             {
-                if (observed != value)
-                {
-                    observed = value;
-                    OnPropertyChanged();
-                }
+                SetProperty(ref observed, value);
             }
         }
 
         public DateTime Date
         {
-            get { return date; }
+            get
+            {
+                return date;
+            }
+
             set
             {
-                if (date != value)
-                {
-                    date = value;
-                    OnPropertyChanged();
-                }
+                SetProperty(ref date, value);
             }
         }
 
         public TimeSpan Time
         {
-            get { return time; }
+            get
+            {
+                return time;
+            }
+
             set
             {
-                if (time != value)
-                {
-                    time = value;
-                    OnPropertyChanged();
-                }
+                SetProperty(ref time, value);
             }
         }
 
         public string Category
         {
-            get { return category; }
+            get
+            {
+                return category;
+            }
+
             set
             {
                 if (!string.IsNullOrEmpty(value) && (string.Compare(category, value) != 0))
@@ -174,20 +179,24 @@ namespace Mobile.ViewModels
 
         public List<string> CategoryChoices
         {
-            get { return categoryChoices; }
+            get
+            {
+                return categoryChoices;
+            }
+
             private set
             {
-                if (!categoryChoices.SequenceEqual(value))
-                {
-                    categoryChoices = value;
-                    OnPropertyChanged();
-                }
+                SetProperty(ref categoryChoices, value);
             }
         }
 
         public string Subcategory
         {
-            get { return subcategory; }
+            get
+            {
+                return subcategory;
+            }
+
             set
             {
                 if (!string.IsNullOrEmpty(value) && (string.Compare(subcategory, value) != 0))
@@ -214,78 +223,83 @@ namespace Mobile.ViewModels
 
         public List<string> SubcategoryChoices
         {
-            get { return subcategoryChoices; }
+            get
+            {
+                return subcategoryChoices;
+            }
+
             private set
             {
-                if (!subcategoryChoices.SequenceEqual(value))
-                {
-                    subcategoryChoices = value;
-                    OnPropertyChanged();
-                }
+                SetProperty(ref subcategoryChoices, value);
             }
         }
 
         public string Detail
         {
-            get { return detail; }
+            get
+            {
+                return detail;
+            }
+
             set
             {
-                if (!string.IsNullOrEmpty(value) && (string.Compare(detail, value) != 0))
-                {
-                    detail = value;
-                    OnPropertyChanged();
-                }
+                SetProperty(ref detail, value);
             }
         }
 
         public List<string> DetailChoices
         {
-            get { return detailChoices; }
+            get
+            {
+                return detailChoices;
+            }
+
             private set
             {
-                if (!detailChoices.SequenceEqual(value))
-                {
-                    detailChoices = value;
-                    OnPropertyChanged();
-                }
+                SetProperty(ref detailChoices, value);
             }
         }
 
         public ObservableCollection<string> Tags
         {
-            get { return tags; }
+            get
+            {
+                return tags;
+            }
+
             set
             {
-                if (!tags.SequenceEqual<string>(value))
-                {
-                    tags = value;
-                    OnPropertyChanged();
-                }
+                SetProperty(ref tags, value);
             }
         }
 
         public string Description
         {
-            get { return description; }
+            get
+            {
+                return description;
+            }
+
             set
             {
-                if (string.Compare(value, description) != 0)
-                {
-                    description = value;
-                    OnPropertyChanged();
-                }
+                SetProperty(ref description, value);
             }
         }
 
+        #endregion
+
+        #region Methods
+
         public ReportDetailViewModel(ISettingsService settings, IReportsDataService rds) : base(settings)
         {
+            reportsDataService = rds;
             Title = "Report";
 
             var query1 = from item in Constants.SeizureClassifications
                          select item.Value;
 
             CategoryChoices = query1.ToList();
-            Category = query1.First();
+            Category = query1.First();     
 
             MessagingCenter.Subscribe<ReportDetailTagsViewModel, IEnumerable<string>>(this, "UpdateTags", ExecuteUpdateTags);
         }
@@ -331,24 +345,34 @@ namespace Mobile.ViewModels
                 ReportType = ReportType,
                 Author = Author,
                 Subject = Subject,
-                Created = Created,
-                Modified = Modified,
+                Created = Created.ToUniversalTime(),
+                Modified = Modified.ToUniversalTime(),
                 Revision = Revision,
-                Observed = Date + Time,
+                Observed = (Date + Time).ToUniversalTime(),
                 Category = Category,
                 Subcategory = Subcategory,
                 Detail = Detail,
-                Tags = new List<string>(Tags),
-                Description = Description
+                Description = Description,
+                Tags = new ObservableCollection<string>(Tags)
             };
 
             if (string.IsNullOrEmpty(report.Id))
             {
-                MessagingCenter.Send(this, "CreateReport", report);
+                var result = await reportsDataService.CreateReport(report);
+                result.Created = result.Created.ToLocalTime();
+                result.Modified = result.Modified.ToLocalTime();
+                result.Observed = result.Observed.ToLocalTime();
+
+                MessagingCenter.Send(this, "CreateReport", result);
             }
             else
             {
-                MessagingCenter.Send(this, "UpdateReport", report);
+                var result = await reportsDataService.UpdateReport(report);
+                result.Created = result.Created.ToLocalTime();
+                result.Modified = result.Modified.ToLocalTime();
+                result.Observed = result.Observed.ToLocalTime();
+
+                MessagingCenter.Send(this, "UpdateReport", result);
             }
 
             await Shell.Current.GoToAsync("..?");
@@ -361,38 +385,20 @@ namespace Mobile.ViewModels
 
         public async void ExecuteDeleteCommand(object parameter)
         {
-            var report = new Report
-            {
-                Id = Id,
-                ReportType = ReportType,
-                Author = Author,
-                Subject = Subject,
-                Created = Created,
-                Modified = Modified,
-                Revision = Revision,
-                Observed = Date + Time,
-                Category = Category,
-                Subcategory = Subcategory,
-                Detail = Detail,
-                Tags = new List<string>(Tags),
-                Description = Description
-            };
+            await reportsDataService.DeleteReport(Id);
 
-            if (!string.IsNullOrEmpty(report.Id))
-            {
-                MessagingCenter.Send(this, "DeleteReport", report);
-            }
-
+            MessagingCenter.Send(this, "DeleteReport", Id);
             await Shell.Current.GoToAsync("..?");
         }
 
         public void ExecuteUpdateTags(ReportDetailTagsViewModel model, IEnumerable<string> tags)
         {
-            if (!Tags.SequenceEqual<string>(tags))
-            {
-                Tags = new ObservableCollection<string>(tags);
-            }
+            Tags = new ObservableCollection<string>(tags);
         }
+
+        #endregion
+
+        #region Fields
 
         private string id;
         private string reportType;
@@ -417,6 +423,8 @@ namespace Mobile.ViewModels
         private List<string> detailChoices = new List<string>();
 
         private ObservableCollection<string> tags = new ObservableCollection<string>();
+        private IReportsDataService reportsDataService;
 
+        #endregion
     }
 }

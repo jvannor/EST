@@ -1,30 +1,29 @@
 ﻿using System;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Web;
 using Xamarin.Essentials;
 using Xamarin.Forms;
+using Mobile.Utilities;
 using Mobile.Models;
 using Mobile.ServiceContracts;
-using System.Web;
 
 namespace Mobile.ViewModels
 {
     internal class HomeViewModel : ViewModelBase
     {
-        public Command TestCommand => new Command(ExecuteTestCommand);
+        #region Properties
+
         public Command NewReportCommand => new Command(ExecuteNewReportCommand);
+
+        #endregion
+
+        #region Methods
 
         public HomeViewModel(ISettingsService ss, IReportsDataService rds) : base(ss)
         {
             Title = "Home";
             reportDataService = rds;
-
-            MessagingCenter.Subscribe<ReportDetailViewModel, Report>(this, "CreateReport", ExecuteCreateReport);
-        }
-
-        public async void ExecuteTestCommand()
-        {
-            await Shell.Current.GoToAsync("reportdetail");
         }
 
         public async void ExecuteNewReportCommand()
@@ -32,7 +31,7 @@ namespace Mobile.ViewModels
             var userName = settingsService.UserName;
             var timestamp = DateTime.Now.ToLocalTime();
 
-            var report = new Report(settingsService.DefaultReportTemplate);
+            var report = Extensions.DeepCopy<Report>(settingsService.DefaultReportTemplate);
             report.Author = report.Subject = settingsService.UserName;
             report.Created = report.Modified = report.Observed = DateTime.Now.ToLocalTime();
 
@@ -41,11 +40,12 @@ namespace Mobile.ViewModels
             await Shell.Current.GoToAsync($"reportdetail?report={encodedReport}");
         }
 
-        public async void ExecuteCreateReport(ReportDetailViewModel model, Report report)
-        {
-            await reportDataService.CreateReport(report);
-        }
+        #endregion
+
+        #region Fields
 
         private IReportsDataService reportDataService;
+
+        #endregion
     }
 }

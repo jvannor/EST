@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json;
 using IdentityModel.OidcClient;
 using IdentityModel.OidcClient.Results;
 
@@ -26,5 +27,11 @@ namespace Mobile.Utilities
                 RefreshToken = refreshTokenResult.RefreshToken,
                 AccessTokenExpiration = refreshTokenResult.AccessTokenExpiration
             };
+
+        public static T DeepCopy<T>(this T self)
+        {
+            var serialized = JsonSerializer.Serialize(self);
+            return JsonSerializer.Deserialize<T>(serialized);
+        }
     }
 }

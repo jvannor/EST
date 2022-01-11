@@ -1,24 +1,20 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
-using Xamarin.Forms;
+using System.Web;
 using Mobile.Models;
 using Mobile.ServiceContracts;
-using System.Web;
+using Mobile.Utilities;
+using Xamarin.Forms;
 
 namespace Mobile.ViewModels
 {
     internal class ReportsViewModel : ViewModelBase
     {
-        public Command LoadMoreDataCommand => new Command(ExecuteLoadMoreDataCommand);
-        public Command RefreshCommand => new Command(ExecuteRefreshCommand);
-        public Command TestCommand => new Command(ExecuteTestCommand);
-        public Command GoToDetailsCommand => new Command(ExecuteGoToDetailsCommand);
+        #region Properties
 
         public bool IsRefreshing
         {
@@ -26,12 +22,20 @@ namespace Mobile.ViewModels
             {
                 return isRefreshing;
             }
+
             set
             {
-                isRefreshing = value;
-                OnPropertyChanged();
+                SetProperty(ref isRefreshing, value);
             }
         }
+
+        public Command AppearingCommand => new Command(ExecuteAppearingCommand);
+
+        public Command GoToDetailsCommand => new Command(ExecuteGoToDetailsCommand);
+
+        public Command LoadReportsCommand => new Command(ExecuteLoadReportsCommand);
+
+        public Command RefreshReportsCommand => new Command(ExecuteRefreshReportsCommand);
 
         public ObservableCollection<Report> Reports
         {
@@ -39,94 +43,69 @@ namespace Mobile.ViewModels
             {
                 return reports;
             }
+
             set
             {
-                reports = value;
-                OnPropertyChanged();
+                SetProperty(ref reports, value);
             }
         }
-                     
-        public ReportsViewModel(ISettingsService settings, IReportsDataService service) : base(settings)
+
+        public int ReportThreshold
         {
+            get
+            {
+                return reportThreshold;
+            }
+
+            set
+            {
+                SetProperty(ref reportThreshold, value);
+            }
+        }
+
+        public Command ReportThresholdReachedCommand => new Command(ExecuteReportThresholdReachedCommand);
+
+        #endregion
+
+        #region Methods
+
+        public ReportsViewModel(ISettingsService ss, IReportsDataService rds) : base(ss)
+        {
+            appeared = false;
+            IsBusy = false;
+            isRefreshing = false;
+            reportsDataService = rds;
+            reports = new ObservableCollection<Report>();
+            reportThreshold = 1;
             Title = "Reports";
 
-            reportsDataService = service;
-            userName = settingsService.UserName;
-
+            MessagingCenter.Subscribe<ReportDetailViewModel, Report>(this, "CreateReport", ExecuteCreateReport);
             MessagingCenter.Subscribe<ReportDetailViewModel, Report>(this, "UpdateReport", ExecuteUpdateReport);
-            MessagingCenter.Subscribe<ReportDetailViewModel, Report>(this, "DeleteReport", ExecuteDeleteReport);
+            MessagingCenter.Subscribe<ReportDetailViewModel, string>(this, "DeleteReport", ExecuteDeleteReport);
         }
 
-        public async void ExecuteRefreshCommand()
+        public async void ExecuteAppearingCommand()
         {
-            try
+            if (!appeared)
             {
-                if (IsBusy) return;
-                IsBusy = true;
-                IsRefreshing = true;
-                reportsDataFullyLoaded = false;
-
-                Reports.Clear();
-                reportsIndex = 0;
-
-                var reports = await reportsDataService.GetReports(userName, reportsIndex / reportsPageSize, reportsPageSize);
-                foreach (var report in reports)
-                {
-                    // local time adjustments
-                    report.Created = report.Created.ToLocalTime();
-                    report.Modified = report.Modified.ToLocalTime();
-                    report.Observed = report.Observed.ToLocalTime();
-
-                    Reports.Add(report);
-                    reportsIndex++;
-                }
-            }
-            catch(Exception ex)
-            {
-                Debug.WriteLine($"ExecuteRefreshCommand() encountered an unexpected exception, {ex.GetType().Name}; {ex.Message}");
-            }
-            finally
-            {
-                IsRefreshing = false;
-                IsBusy = false;
+                ExecuteRefreshReportsCommand();
+                appeared = true;
             }
         }
 
-        public async void ExecuteLoadMoreDataCommand()
+        public async void ExecuteCreateReport(ReportDetailViewModel model, Report report)
         {
-            try
-            {
-                if (IsBusy) return;
-                if (reportsDataFullyLoaded) return;
-                IsBusy = true;
+            var temp = Reports.Union<Report>(new[] { report })
+                .GroupBy(r => r.Id)
+                .Select(group => group.FirstOrDefault())
+                .OrderByDescending(r => r.Observed);
+            
+            Reports = new ObservableCollection<Report>(temp);
+        }
 
-                var reports = await reportsDataService.GetReports(userName, reportsIndex / reportsPageSize, reportsPageSize);
-                var count = reports.Count();
-                if (reportsIndex == ((reportsIndex / reportsPageSize) * reportsPageSize) + count)
-                {
-                    reportsDataFullyLoaded = true;
-                    return;
-                }
-
-                foreach(var report in reports)
-                {
-                    // date time adjustments
-                    report.Created = report.Created.ToLocalTime();
-                    report.Modified = report.Modified.ToLocalTime();
-                    report.Observed = report.Observed.ToLocalTime();
-                    
-                    Reports.Add(report);
-                }
-                reportsIndex += count;
-            }
-            catch(Exception ex)
-            {
-                Debug.WriteLine($"ExecuteLoadMoreDataCommand() encountered an unexpected exception, {ex.GetType().Name}; {ex.Message}");
-            }
-            finally
-            {
-                IsBusy = false;
-            }
+        public async void ExecuteDeleteReport(ReportDetailViewModel model, string parameter)
+        {
+            Reports.Remove(Reports.FirstOrDefault(target => target.Id == parameter));
         }
 
         public async void ExecuteGoToDetailsCommand(object parameter)
@@ -140,35 +119,105 @@ namespace Mobile.ViewModels
             }
         }
 
-        public async void ExecuteTestCommand()
+        public async void ExecuteLoadReportsCommand()
         {
-            Debug.WriteLine("ReportsViewModel::ExecuteTestCommand()");
-            var newReports = await reportsDataService.GetReports(userName, 0, 10);
+            try
+            {
+                if (!IsBusy)
+                {
+                    IsBusy = true;
+                    ReportThreshold = 1;
+                    Reports.Clear();
+
+                    var reports = await reportsDataService.GetReports(settingsService.UserName, 0, 10);
+                    foreach(var report in reports)
+                    {
+                        report.Created = report.Created.ToLocalTime();
+                        report.Modified = report.Modified.ToLocalTime();
+                        report.Observed = report.Observed.ToLocalTime();
+
+                        Reports.Add(report);
+                    }
+
+                    IsBusy = false;
+                }
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine($"ReportsViewModel::ExecuteLoadReportsCommand Exception: {ex.GetType().Name} - {ex.Message}");
+            }
         }
 
-        public async void ExecuteUpdateReport(ReportDetailViewModel model, Report report)
+        public async void ExecuteRefreshReportsCommand()
         {
-            report.Created = report.Created.ToUniversalTime();
-            report.Modified = report.Modified.ToUniversalTime();
-            report.Observed = report.Observed.ToUniversalTime();
+            ExecuteLoadReportsCommand();
+            IsRefreshing = false;
+        }
 
+        public async void ExecuteReportThresholdReachedCommand()
+        {
+            try
+            {
+                if (!IsBusy)
+                {
+                    IsBusy = true;
+
+                    var reports = await reportsDataService.GetReports(settingsService.UserName, Reports.Count / 10, 10);
+                    if ((reports.Count() == 0) || (reports.Last().Id == Reports.Last().Id))
+                    {
+                        ReportThreshold = -1;
+                    }
+                    else
+                    {
+                        foreach(var report in reports)
+                        {
+                            report.Created = report.Created.ToLocalTime();
+                            report.Modified = report.Modified.ToLocalTime();
+                            report.Observed = report.Observed.ToLocalTime();
+
+                            Reports.Add(report);
+                        }
+                    }
+
+                    IsBusy = false;
+                }
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine($"ReportsViewModel::ExecuteReportThresholdReachedCommand Exception: {ex.GetType().Name} - {ex.Message}");
+            }
+        }
+
+        public async void ExecuteUpdateReport(ReportDetailViewModel mode, Report report)
+        {
+            var created = report.Created;
+            var modified = report.Modified;
+            var observed = report.Observed;
+
+            report.Created = created.ToUniversalTime();
+            report.Modified = modified.ToUniversalTime();
+            report.Observed = observed.ToUniversalTime();
             await reportsDataService.UpdateReport(report);
+
+            var temp = Reports.FirstOrDefault<Report>(r => report.Id == r.Id);
+            temp.Observed = observed;
+            temp.Category = report.Category;
+            temp.Subcategory = report.Subcategory;
+            temp.Detail = report.Detail;
+            temp.Description = report.Description;
+            temp.Tags = new ObservableCollection<string>(report.Tags);
         }
 
-        public async void ExecuteDeleteReport(ReportDetailViewModel model, Report report)
-        {
-            await reportsDataService.DeleteReport(report.Id);
-        }
-        
+        #endregion
 
+        #region Fields
+
+        private bool appeared;
+        private bool isRefreshing;
         private IReportsDataService reportsDataService;
-        private string userName = string.Empty; 
+        private ObservableCollection<Report> reports;
+        private int reportThreshold;
 
-        private ObservableCollection<Report> reports = new ObservableCollection<Report>();
-        private const int reportsPageSize = 10;
-        private int reportsIndex = 0;
-        private bool reportsDataFullyLoaded = false;
-
-        private bool isRefreshing = false;
+        #endregion
     }
 }
