@@ -31,5 +31,24 @@ namespace Mobile.Models
             new List<string>();
 
         public string Description { get; set; }
+
+        public Report() { }
+
+        public Report(Report source)
+        {
+            Id = source.Id;
+            ReportType = source.ReportType;
+            Author = source.Author;
+            Subject = source.Subject;
+            Created = source.Created;
+            Modified = source.Modified;
+            Revision = source.Revision;
+            Observed = source.Observed;
+            Category = source.Category;
+            Subcategory = source.Subcategory;
+            Detail = source.Detail;
+            Tags = new List<string>(source.Tags);
+            Description = source.Description;
+        }
     }
 }

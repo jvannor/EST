@@ -14,8 +14,9 @@ namespace Mobile.ViewModels
     internal class ReportDetailViewModel : ViewModelBase, IQueryAttributable
     {
         public Command GoToTagsCommand => new Command(ExecuteGoToTagsCommand);
-        public Command SaveCommand => new Command(ExecuteSaveCommand);
+        public Command CancelCommand => new Command(ExecuteCancelCommand);
         public Command DeleteCommand => new Command(ExecuteDeleteCommand);
+        public Command SaveCommand => new Command(ExecuteSaveCommand);
 
         public string Id
         {
@@ -350,6 +351,11 @@ namespace Mobile.ViewModels
                 MessagingCenter.Send(this, "UpdateReport", report);
             }
 
+            await Shell.Current.GoToAsync("..?");
+        }
+
+        public async void ExecuteCancelCommand(object parameter)
+        {
             await Shell.Current.GoToAsync("..?");
         }
 
