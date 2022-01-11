@@ -19,7 +19,7 @@ jobs:
     - name: Logout from Docker Hub
       run: docker logout
     
-  build-webp-api:
+  build-web-api:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
