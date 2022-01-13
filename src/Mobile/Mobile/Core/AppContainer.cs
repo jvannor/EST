@@ -23,13 +23,15 @@ namespace Mobile.Core
             builder.RegisterType<ReportDetailTagsViewModel>();
             builder.RegisterType<SettingsViewModel>();
             builder.RegisterType<TagsViewModel>();
+            builder.RegisterType<TagDetailViewModel>();
             builder.RegisterType<TemplatesViewModel>();
 
             // services
-            builder.RegisterType<SettingsService>().As<ISettingsService>();
             builder.RegisterType<AuthenticationService>().As<IAuthenticationService>();
             builder.RegisterType<GenericRestService>().As<IGenericRestService>();
             builder.RegisterType<ReportsDataService>().As<IReportsDataService>();
+            builder.RegisterType<SettingsService>().As<ISettingsService>();
+            builder.RegisterType<SettingsDocumentService>().As<ISettingsDocumentService>();
 
             container = builder.Build();
         }

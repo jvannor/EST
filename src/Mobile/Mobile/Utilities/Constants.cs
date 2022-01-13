@@ -54,5 +54,7 @@ namespace Mobile.Utilities
         public const string Scope = "openid profile email EST.WebApi offline_access";
         public const string Api = "https://api.dev.detroitcyclecar.com:6001";
         public const string ReportsApiEndpoint = "/api/report";
+        public const string SettingsApiEndpoint = "/api/settings";
+        public const string SettingsDocument = "SettingsDocument";
     }
 }

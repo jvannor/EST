@@ -39,12 +39,21 @@ namespace Mobile.ViewModels
             }
         }
 
-        public ReportDetailTagsViewModel(ISettingsService settings) : base(settings)
+        public ReportDetailTagsViewModel(ISettingsService ss, ISettingsDocumentService sds) : base(ss)
         {
             Title = "Tags";
 
-            tags = new ObservableCollection<string>(settings.DefaultTags);
+            settingsDocumentService = sds;
+            tags = new ObservableCollection<string>();
             selectedTags = new ObservableCollection<object>();
+
+            Init();
+        }
+
+        public async void Init()
+        {
+            var doc = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
+            Tags = new ObservableCollection<string>(doc.Tags);
         }
 
         public void ApplyQueryAttributes(IDictionary<string, string> query)
@@ -70,6 +79,7 @@ namespace Mobile.ViewModels
             await Shell.Current.GoToAsync($"..?");
         }
 
+        private ISettingsDocumentService settingsDocumentService;
         private ObservableCollection<object> selectedTags;
         private ObservableCollection<string> tags;
     }

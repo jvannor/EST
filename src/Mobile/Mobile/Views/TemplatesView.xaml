@@ -8,7 +8,13 @@
     x:Class="Mobile.Views.TemplatesView">
     <ContentPage.Content>
         <StackLayout Margin="16,8,16,0">
-            <Label Text="Templates"/>
+            <StackLayout BindableLayout.ItemsSource="{Binding SettingsDocument.Templates}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Label Text="{Binding Title}"/>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </StackLayout>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

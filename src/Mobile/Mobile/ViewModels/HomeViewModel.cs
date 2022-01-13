@@ -7,6 +7,8 @@ using Xamarin.Forms;
 using Mobile.Utilities;
 using Mobile.Models;
 using Mobile.ServiceContracts;
+using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace Mobile.ViewModels
 {
@@ -20,9 +22,10 @@ namespace Mobile.ViewModels
 
         #region Methods
 
-        public HomeViewModel(ISettingsService ss, IReportsDataService rds) : base(ss)
+        public HomeViewModel(ISettingsService ss, ISettingsDocumentService sds, IReportsDataService rds) : base(ss)
         {
             Title = "Home";
+            settingsDocumentService = sds;
             reportDataService = rds;
         }
 
@@ -31,9 +34,20 @@ namespace Mobile.ViewModels
             var userName = settingsService.UserName;
             var timestamp = DateTime.Now.ToLocalTime();
 
-            var report = Extensions.DeepCopy<Report>(settingsService.DefaultReportTemplate);
-            report.Author = report.Subject = settingsService.UserName;
-            report.Created = report.Modified = report.Observed = DateTime.Now.ToLocalTime();
+            var doc = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
+            var template = doc.Templates.First().Content;
+            var report = new Report
+            {
+                Author = settingsService.UserName,
+                Subject = settingsService.UserName,
+                Created = DateTime.Now.ToLocalTime(),
+                Modified = DateTime.Now.ToLocalTime(),
+                Observed = DateTime.Now.ToLocalTime(),
+                Category = template.Category,
+                Subcategory = template.Subcategory,
+                Detail = template.Detail,
+                Tags = new ObservableCollection<string>(template.Tags)
+            };
 
             var reportJson = JsonSerializer.Serialize(report);
             var encodedReport = HttpUtility.UrlEncode(reportJson);
@@ -44,6 +58,7 @@ namespace Mobile.ViewModels
 
         #region Fields
 
+        private ISettingsDocumentService settingsDocumentService;
         private IReportsDataService reportDataService;
 
         #endregion

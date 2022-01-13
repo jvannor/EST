@@ -16,11 +16,8 @@
             <convert:ReportCategoryConverter x:Key="reportCategory" />
         </ResourceDictionary>
     </ContentPage.Resources>
-    <ContentPage.Behaviors>
-        <xct:EventToCommandBehavior EventName="Appearing" Command="{Binding AppearingCommand}" />
-    </ContentPage.Behaviors>
     <ContentPage.Content>
-        <RefreshView IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshReportsCommand}" Margin="8">
+        <RefreshView IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshReportsCommand}" Margin="16,8,16,0">
             <CollectionView ItemsSource="{Binding Reports}" EmptyView="No items to display" RemainingItemsThreshold="{Binding ReportThreshold}" RemainingItemsThresholdReachedCommand="{Binding ReportThresholdReachedCommand}" VerticalScrollBarVisibility="Never">
                 <CollectionView.ItemsLayout>
                     <LinearItemsLayout Orientation="Vertical" ItemSpacing="8"/>

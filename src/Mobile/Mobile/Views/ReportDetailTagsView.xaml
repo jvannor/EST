@@ -17,7 +17,8 @@
             ItemsSource="{Binding Tags}"
             SelectedItems="{Binding SelectedTags}"
             SelectionMode="Multiple"
-            Margin="8">
+            Margin="16,8,16,0"
+            VerticalScrollBarVisibility="Never">
             <CollectionView.ItemsLayout>
                 <LinearItemsLayout
                     Orientation="Vertical"

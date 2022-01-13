@@ -16,6 +16,11 @@ namespace Mobile.ViewModels
     {
         #region Properties
 
+        public Command GoToDetailsCommand => new Command(ExecuteGoToDetailsCommand);
+        public Command LoadReportsCommand => new Command(ExecuteLoadReportsCommand);
+        public Command RefreshReportsCommand => new Command(ExecuteRefreshReportsCommand);
+
+
         public bool IsRefreshing
         {
             get
@@ -28,14 +33,6 @@ namespace Mobile.ViewModels
                 SetProperty(ref isRefreshing, value);
             }
         }
-
-        public Command AppearingCommand => new Command(ExecuteAppearingCommand);
-
-        public Command GoToDetailsCommand => new Command(ExecuteGoToDetailsCommand);
-
-        public Command LoadReportsCommand => new Command(ExecuteLoadReportsCommand);
-
-        public Command RefreshReportsCommand => new Command(ExecuteRefreshReportsCommand);
 
         public ObservableCollection<Report> Reports
         {
@@ -71,7 +68,6 @@ namespace Mobile.ViewModels
 
         public ReportsViewModel(ISettingsService ss, IReportsDataService rds) : base(ss)
         {
-            appeared = false;
             IsBusy = false;
             isRefreshing = false;
             reportsDataService = rds;
@@ -79,17 +75,23 @@ namespace Mobile.ViewModels
             reportThreshold = 1;
             Title = "Reports";
 
+            Init();
+
             MessagingCenter.Subscribe<ReportDetailViewModel, Report>(this, "CreateReport", ExecuteCreateReport);
             MessagingCenter.Subscribe<ReportDetailViewModel, Report>(this, "UpdateReport", ExecuteUpdateReport);
             MessagingCenter.Subscribe<ReportDetailViewModel, string>(this, "DeleteReport", ExecuteDeleteReport);
         }
 
-        public async void ExecuteAppearingCommand()
+        public async void Init()
         {
-            if (!appeared)
+            var reports = await reportsDataService.GetReports(settingsService.UserName, 0, 10);
+            foreach (var report in reports)
             {
-                ExecuteRefreshReportsCommand();
-                appeared = true;
+                report.Created = report.Created.ToLocalTime();
+                report.Modified = report.Modified.ToLocalTime();
+                report.Observed = report.Observed.ToLocalTime();
+
+                Reports.Add(report);
             }
         }
 
@@ -212,7 +214,6 @@ namespace Mobile.ViewModels
 
         #region Fields
 
-        private bool appeared;
         private bool isRefreshing;
         private IReportsDataService reportsDataService;
         private ObservableCollection<Report> reports;

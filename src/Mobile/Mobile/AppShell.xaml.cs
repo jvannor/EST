@@ -13,6 +13,7 @@ namespace Mobile
 
             Routing.RegisterRoute("reportdetail", typeof(ReportDetailView));
             Routing.RegisterRoute("reportdetailtags", typeof(ReportDetailTagsView));
+            Routing.RegisterRoute("tagdetails", typeof(TagDetailView));
         }
     }
 }

@@ -14,7 +14,7 @@
         <BackButtonBehavior TextOverride="Cancel"/>
     </Shell.BackButtonBehavior>
     <ContentPage.Content>
-        <ScrollView VerticalScrollBarVisibility="Never" Padding="16">
+        <ScrollView VerticalScrollBarVisibility="Never" Margin="16,8,16,0">
             <StackLayout>
                 <Label Text="Date" FontSize="13" />
                 <DatePicker Date="{Binding Date}" Format="D" FontSize="16"/>
@@ -83,7 +83,6 @@
                             </Label.GestureRecognizers>
                         </Label>
                     </Frame>
-
                 </StackLayout>
                 
             </StackLayout>
