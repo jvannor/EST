@@ -12,6 +12,7 @@ namespace Mobile
         {
             InitializeComponent();
 
+            Akavache.Registrations.Start("EST");
             MainPage = new AppShell();
         }
 

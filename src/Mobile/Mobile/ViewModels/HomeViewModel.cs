@@ -36,22 +36,27 @@ namespace Mobile.ViewModels
 
             var doc = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
             var template = doc.Templates.First().Content;
-            var report = new Report
+
+            var report = new Report()
             {
+                Id = string.Empty,
+                ReportType = "Seizure Report",
                 Author = settingsService.UserName,
                 Subject = settingsService.UserName,
-                Created = DateTime.Now.ToLocalTime(),
-                Modified = DateTime.Now.ToLocalTime(),
-                Observed = DateTime.Now.ToLocalTime(),
+                Revision = 1,
+                Created = timestamp,
+                Modified = timestamp,
+                Observed = timestamp,
                 Category = template.Category,
                 Subcategory = template.Subcategory,
                 Detail = template.Detail,
+                Description = string.Empty,
                 Tags = new ObservableCollection<string>(template.Tags)
             };
 
             var reportJson = JsonSerializer.Serialize(report);
             var encodedReport = HttpUtility.UrlEncode(reportJson);
-            await Shell.Current.GoToAsync($"reportdetail?report={encodedReport}");
+            await Shell.Current.GoToAsync($"reportdetail?Report={encodedReport}");
         }
 
         #endregion

@@ -17,23 +17,23 @@
         <ScrollView VerticalScrollBarVisibility="Never" Margin="16,8,16,0">
             <StackLayout>
                 <Label Text="Date" FontSize="13" />
-                <DatePicker Date="{Binding Date}" Format="D" FontSize="16"/>
+                <DatePicker Date="{Binding Report.Date}" Format="D" FontSize="16"/>
                 <BoxView HeightRequest="8"/>
 
                 <Label Text="Time" FontSize="13" />
-                <TimePicker Time="{Binding Time}"/>
+                <TimePicker Time="{Binding Report.Time}"/>
                 <BoxView HeightRequest="8"/>
 
                 <Label Text="Category" FontSize="13" />
-                <Picker Title="Category" ItemsSource="{Binding CategoryChoices}" SelectedItem="{Binding Category}" FontSize="16" />
+                <Picker Title="Category" ItemsSource="{Binding Report.Categories}" SelectedItem="{Binding Report.Category}" FontSize="16" />
                 <BoxView HeightRequest="8"/>
 
                 <Label Text="Subcategory" FontSize="13" />
-                <Picker Title="Subcategory" ItemsSource="{Binding SubcategoryChoices}" SelectedItem="{Binding Subcategory}" FontSize="16" />
+                <Picker Title="Subcategory" ItemsSource="{Binding Report.Subcategories}" SelectedItem="{Binding Report.Subcategory}" FontSize="16" />
                 <BoxView HeightRequest="8"/>
 
                 <Label Text="Detail" FontSize="13"/>
-                <Picker Title="Detail" ItemsSource="{Binding DetailChoices}" SelectedItem="{Binding Detail}" FontSize="16"/>
+                <Picker Title="Detail" ItemsSource="{Binding Report.Details}" SelectedItem="{Binding Report.Detail}" FontSize="16"/>
                 <BoxView HeightRequest="8"/>
 
                 <Label Text="Tags" FontSize="13">
@@ -41,7 +41,7 @@
                         <TapGestureRecognizer Command="{Binding GoToTagsCommand}"/>
                     </Label.GestureRecognizers>
                 </Label>
-                <FlexLayout BindableLayout.ItemsSource="{Binding Tags}" BindableLayout.EmptyView="None" Direction="Row" JustifyContent="Start" Wrap="Wrap">
+                <FlexLayout BindableLayout.ItemsSource="{Binding Report.Tags}" BindableLayout.EmptyView="None" Direction="Row" JustifyContent="Start" Wrap="Wrap">
                     <FlexLayout.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding GoToTagsCommand}" />
                     </FlexLayout.GestureRecognizers>
@@ -58,7 +58,7 @@
                 <BoxView HeightRequest="8"/>
                 
                 <Label Text="Description" FontSize="13"/>
-                <Editor AutoSize="TextChanges" Placeholder="Enter description here."  Text="{Binding Description}" FontSize="16" />
+                <Editor AutoSize="TextChanges" Placeholder="Enter description here."  Text="{Binding Report.Description}" FontSize="16" />
                 <BoxView HeightRequest="8"/>
 
                 <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
