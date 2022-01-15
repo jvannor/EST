@@ -7,7 +7,13 @@ namespace Mobile.ViewModels
 {
     internal class LoadingViewModel : ViewModelBase
     {
+        #region Commands
+
         public Command AppearingCommand => new Command(ExecuteAppearingCommand);
+
+        #endregion
+
+        #region Methods
 
         public LoadingViewModel(ISettingsService settings, IAuthenticationService authentication) : base(settings)
         {
@@ -34,6 +40,12 @@ namespace Mobile.ViewModels
             }
         }
 
+        #endregion
+
+        #region Fields
+
         private IAuthenticationService authenticationService;
+
+        #endregion
     }
 }

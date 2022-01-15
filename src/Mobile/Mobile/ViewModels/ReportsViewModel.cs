@@ -14,12 +14,17 @@ namespace Mobile.ViewModels
 {
     internal class ReportsViewModel : ViewModelBase
     {
-        #region Properties
+        #region Commands
 
         public Command GoToDetailsCommand => new Command(ExecuteGoToDetailsCommand);
+
         public Command LoadReportsCommand => new Command(ExecuteLoadReportsCommand);
+
         public Command RefreshReportsCommand => new Command(ExecuteRefreshReportsCommand);
 
+        #endregion
+
+        #region Properties
 
         public bool IsRefreshing
         {

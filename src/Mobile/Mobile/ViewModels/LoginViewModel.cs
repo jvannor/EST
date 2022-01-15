@@ -8,7 +8,13 @@ namespace Mobile.ViewModels
 {
     internal class LoginViewModel : ViewModelBase
     {
+        #region Commands
+
         public Command LoginCommand => new Command(OnLogin);
+
+        #endregion
+
+        #region Methods
 
         public LoginViewModel(ISettingsService settings, IAuthenticationService authentication) : base(settings)
         {
@@ -31,6 +37,12 @@ namespace Mobile.ViewModels
             }
         }
 
+        #endregion
+
+        #region Fields
+
         private IAuthenticationService authenticationService;
+
+        #endregion
     }
 }

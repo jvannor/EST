@@ -11,7 +11,13 @@ namespace Mobile.ViewModels
 {
     internal class ReportDetailTagsViewModel : ViewModelBase, IQueryAttributable
     {
+        #region Commands
+
         public Command SaveCommand => new Command(ExecuteSaveCommand);
+
+        #endregion
+
+        #region Properties
 
         public ObservableCollection<object> SelectedTags
         {
@@ -38,6 +44,10 @@ namespace Mobile.ViewModels
                 }
             }
         }
+
+        #endregion
+
+        #region Methods
 
         public ReportDetailTagsViewModel(ISettingsService ss, ISettingsDocumentService sds) : base(ss)
         {
@@ -72,15 +82,18 @@ namespace Mobile.ViewModels
 
         public async void ExecuteSaveCommand(object parameter)
         {
-            var tags = from tag in SelectedTags
-                       select tag as string;
-
-            MessagingCenter.Send(this, "UpdateTags", tags);
+            MessagingCenter.Send(this, "UpdateTags", SelectedTags.Select(x => x as string));
             await Shell.Current.GoToAsync($"..?");
         }
+
+        #endregion
+
+        #region Fields
 
         private ISettingsDocumentService settingsDocumentService;
         private ObservableCollection<object> selectedTags;
         private ObservableCollection<string> tags;
+
+        #endregion
     }
 }
