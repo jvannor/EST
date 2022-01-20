@@ -14,49 +14,82 @@ namespace Mobile.ViewModels
 {
     internal class HomeViewModel : ViewModelBase
     {
-        #region Properties
+        #region Commands
+
+        public Command RefreshCommand => new Command(ExecuteRefreshCommand);
 
         public Command NewReportCommand => new Command(ExecuteNewReportCommand);
 
         #endregion
 
-        #region Methods
+        #region Properties
 
-        public HomeViewModel(ISettingsService ss, ISettingsDocumentService sds, IReportsDataService rds) : base(ss)
+        public bool IsRefreshing
         {
-            Title = "Home";
-            settingsDocumentService = sds;
-            reportDataService = rds;
+            get { return isRefreshing; }
+            set { SetProperty(ref isRefreshing, value); }
         }
 
-        public async void ExecuteNewReportCommand()
+        public SettingsDocument SettingsDocument
         {
-            var userName = settingsService.UserName;
-            var timestamp = DateTime.Now.ToLocalTime();
+            get { return settingsDocument; }
+            set { SetProperty(ref settingsDocument, value); }
+        }
 
-            var doc = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
-            var template = doc.Templates.First().Content;
+        #endregion
 
-            var report = new Report()
+        #region Methods
+
+        public HomeViewModel(
+            ISettingsService settingsService,
+            ISettingsDocumentService settingsDocumentService,
+            IReportsDataService reportDataService) : base(settingsService)
+        {
+            Title = "Epileptic Seizure Tracker";
+            this.settingsDocumentService = settingsDocumentService;
+            this.reportDataService = reportDataService;
+
+            Init();
+        }
+
+        private async void Init()
+        {
+            SettingsDocument = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
+        }
+
+        public async void ExecuteNewReportCommand(object parameter)
+        {
+            var template = parameter as ReportTemplate;
+            if (template != null)
             {
-                Id = string.Empty,
-                ReportType = "Seizure Report",
-                Author = settingsService.UserName,
-                Subject = settingsService.UserName,
-                Revision = 1,
-                Created = timestamp,
-                Modified = timestamp,
-                Observed = timestamp,
-                Category = template.Category,
-                Subcategory = template.Subcategory,
-                Detail = template.Detail,
-                Description = string.Empty,
-                Tags = new ObservableCollection<string>(template.Tags)
-            };
+                var timeStamp = DateTime.Now.ToLocalTime();
+                var report = new Report
+                {
+                    Id = string.Empty,
+                    ReportType = "Seizure Report",
+                    Author = settingsService.UserName,
+                    Subject = settingsService.UserName,
+                    Revision = 1,
+                    Created = timeStamp,
+                    Modified = timeStamp,
+                    Observed = timeStamp,
+                    Category = template.Content.Category,
+                    Subcategory = template.Content.Subcategory,
+                    Detail = template.Content.Detail,
+                    Description = string.Empty,
+                    Tags = new ObservableCollection<string>(template.Content.Tags)
+                };
 
-            var reportJson = JsonSerializer.Serialize(report);
-            var encodedReport = HttpUtility.UrlEncode(reportJson);
-            await Shell.Current.GoToAsync($"reportdetail?Report={encodedReport}");
+                var reportJson = JsonSerializer.Serialize(report);
+                var encodedReport = HttpUtility.UrlEncode(reportJson);
+                await Shell.Current.GoToAsync($"ReportDetail?Report={encodedReport}");
+            }
+        }
+
+        public async void ExecuteRefreshCommand()
+        {
+            SettingsDocument = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
+            IsRefreshing = false;
         }
 
         #endregion
@@ -65,6 +98,8 @@ namespace Mobile.ViewModels
 
         private ISettingsDocumentService settingsDocumentService;
         private IReportsDataService reportDataService;
+        private bool isRefreshing;
+        private SettingsDocument settingsDocument;
 
         #endregion
     }

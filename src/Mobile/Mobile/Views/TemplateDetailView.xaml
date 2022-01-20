@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:utilities="clr-namespace:Mobile.Utilities"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="{Binding Title}"
+    utilities:ViewModelLocator.AutoWireViewModel="True"
+    x:Class="Mobile.Views.TemplateDetailView">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Delete" Command="{Binding DeleteCommand}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource FontFamily="FontAwesomeSolid" Size="Large" Glyph="Trash"/>
+        </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+        <ToolbarItem Text="Save" Command="{Binding SaveCommand}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource FontFamily="FontAwesomeSolid" Size="Large" Glyph="Save"/>
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+    </ContentPage.ToolbarItems>
+    <ContentPage.Content>
+        <StackLayout Margin="16,8,16,0">
+            <Label Text="Title" FontSize="Small"/>
+            <Entry Text="{Binding ReportTemplate.Title}" Placeholder="Template Title" FontSize="16"/>
+            <BoxView HeightRequest="8"/>
+
+            <Label Text="Category" FontSize="Small"/>
+            <Picker Title="Category" ItemsSource="{Binding ReportTemplate.Content.Categories}" SelectedItem="{Binding ReportTemplate.Content.Category}" FontSize="16" />
+            <BoxView HeightRequest="8"/>
+
+            <Label Text="Subcategory" FontSize="Small"/>
+            <Picker Title="Subcategory" ItemsSource="{Binding ReportTemplate.Content.Subcategories}" SelectedItem="{Binding ReportTemplate.Content.Subcategory}" FontSize="16" />
+            <BoxView HeightRequest="8"/>
+
+            <Label Text="Detail" FontSize="Small"/>
+            <Picker Title="Detail" ItemsSource="{Binding ReportTemplate.Content.Details}" SelectedItem="{Binding ReportTemplate.Content.Detail}" FontSize="16" />
+            <BoxView HeightRequest="8"/>
+
+            <Label Text="Tags" FontSize="Small">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding GoToTagsCommand}"/>
+                </Label.GestureRecognizers>
+            </Label>
+            <FlexLayout BindableLayout.ItemsSource="{Binding ReportTemplate.Content.Tags}" BindableLayout.EmptyView="None" Direction="Row" JustifyContent="Start" Wrap="Wrap">
+                <FlexLayout.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding GoToTagsCommand}" />
+                </FlexLayout.GestureRecognizers>
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Frame HasShadow="False" Padding="0,0,8,8">
+                            <Frame BorderColor="{StaticResource DarkPrimaryColor}" BackgroundColor="{StaticResource LightPrimaryColor}" HasShadow="False" Padding="8,4,8,4">
+                                <Label Text="{Binding}" FontSize="Small"/>
+                            </Frame>
+                        </Frame>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </FlexLayout>
+            <BoxView HeightRequest="8"/>
+
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

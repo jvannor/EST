@@ -9,7 +9,7 @@
     x:Class="Mobile.Views.LoginView">
     <ContentPage.Content>
         <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
-            <Label Text="Welcome" HorizontalOptions="Center" />
+            <Label Text="Welcome" HorizontalOptions="Center" FontSize="Medium" />
             <Button Text="Login" Command="{Binding LoginCommand}" HorizontalOptions="Center" />
         </StackLayout>
     </ContentPage.Content>

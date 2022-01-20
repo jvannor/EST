@@ -167,13 +167,11 @@ namespace Mobile.Models
         {
             if (e.PropertyName == nameof(Category))
             {
-                System.Diagnostics.Debug.Write("!");
                 Subcategories = new ObservableCollection<string>(CLASSIFICATIONS.Where(x => x.Item2 == category.Item1).Select(x => x.Item3));
                 Subcategory = Subcategories.First();
             }
             else if (e.PropertyName == nameof(Subcategory))
             {
-                System.Diagnostics.Debug.Write("!");
                 Details = new ObservableCollection<string>(CLASSIFICATIONS.Where(x => x.Item2 == subcategory.Item1).Select(x => x.Item3));
                 Detail = Details.First();
             }

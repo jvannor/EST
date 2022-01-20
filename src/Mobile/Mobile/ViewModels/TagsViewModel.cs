@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text.Json;
 using System.Web;
 using Mobile.Models;
@@ -73,19 +74,23 @@ namespace Mobile.ViewModels
 
         public async void ExecuteDeleteTag(TagDetailViewModel model, string tag)
         {
-            SettingsDocument.Tags.Remove(tag);
-            await settingsDocumentService.UpdateSettingsDocument(SettingsDocument);
+            var target = SettingsDocument.Tags.Where(t => t == tag).FirstOrDefault();
+            if (target != null)
+            {
+                SettingsDocument.Tags.Remove(tag);
+                await settingsDocumentService.UpdateSettingsDocument(SettingsDocument);
+            }
         }
 
         public async void ExecuteEditCommand(object parameter)
         {
             var encoded = HttpUtility.UrlEncode((string)parameter);
-            await Shell.Current.GoToAsync($"tagdetails?tag={encoded}");
+            await Shell.Current.GoToAsync($"TagDetails?Tag={encoded}");
         }
 
         public async void ExecuteNewCommand()
         {
-            await Shell.Current.GoToAsync("tagdetails?tag=");
+            await Shell.Current.GoToAsync("TagDetails?Tag=");
         }
 
         public async void ExecuteRefreshCommand()

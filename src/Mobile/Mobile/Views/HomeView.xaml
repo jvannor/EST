@@ -2,19 +2,50 @@
 <ContentPage
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:utilities="clr-namespace:Mobile.Utilities"
+    xmlns:vm="clr-namespace:Mobile.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="{Binding Title}"
     utilities:ViewModelLocator.AutoWireViewModel="True"
     x:Class="Mobile.Views.HomeView">
     <ContentPage.Content>
+        <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}" Margin="16,8,16,0">
+            <CollectionView ItemsSource="{Binding SettingsDocument.Templates}">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="16"/>
+                </CollectionView.ItemsLayout>
+                <CollectionView.Header>
+                    <StackLayout x:Name="Header">
+                        <Image HorizontalOptions="Center" VerticalOptions="Center">
+                            <Image.Source>
+                                <FontImageSource x:Name="HeaderImage" Color="{StaticResource PrimaryColor}" FontFamily="FontAwesomeSolid" Size="Title" Glyph="Notes-Medical"/>
+                            </Image.Source>
+                        </Image>
+                    </StackLayout>
+                </CollectionView.Header>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BorderColor="{StaticResource DarkPrimaryColor}" HasShadow="False" Padding="8,4,8,4">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HomeViewModel}}, Path=NewReportCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </Frame.GestureRecognizers>
+                            <Label Text="{Binding Title, StringFormat='Create New {0} Report'}" HorizontalOptions="Center" FontSize="Medium"/>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+        <!--
         <StackLayout Margin="16,8,16,0">
             <Frame BorderColor="{StaticResource DarkPrimaryColor}" HasShadow="False" Padding="8,4,8,4">
-                <Label Text="Create New Report" HorizontalOptions="Center">
+                <Label Text="Create New Report" HorizontalOptions="Center" FontSize="Medium">
                     <Label.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NewReportCommand}" />
                     </Label.GestureRecognizers>
                 </Label>
             </Frame>
         </StackLayout>
+        -->
     </ContentPage.Content>
 </ContentPage>

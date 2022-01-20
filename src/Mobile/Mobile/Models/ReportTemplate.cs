@@ -43,6 +43,16 @@ namespace Mobile.Models
 
         #endregion
 
+        #region Methods
+
+        public ReportTemplate()
+        {
+            Title = string.Empty;
+            Content = new ReportTemplateContent();
+        }
+
+        #endregion
+
         #region Fields
 
         private string title;

@@ -5,27 +5,27 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="Mobile.AppShell">
 
-    <ShellContent Route="loading" ContentTemplate="{DataTemplate local:LoadingView}" />
-    <ShellContent Route="login" ContentTemplate="{DataTemplate local:LoginView}" />
+    <ShellContent Route="Loading" ContentTemplate="{DataTemplate local:LoadingView}" />
+    <ShellContent Route="Login" ContentTemplate="{DataTemplate local:LoginView}" />
 
     <TabBar>
-        <ShellContent Title="Home" Route="home" ContentTemplate="{DataTemplate local:HomeView}">
+        <ShellContent Title="Home" Route="Home" ContentTemplate="{DataTemplate local:HomeView}">
             <ShellContent.Icon>
-                <FontImageSource FontFamily="FontAwesomeSolid" Glyph="home" />
+                <FontImageSource FontFamily="FontAwesomeSolid" Size="Large" Glyph="Home" />
             </ShellContent.Icon>
         </ShellContent>
-        <ShellContent Title="Reports" Route="reports" ContentTemplate="{DataTemplate local:ReportsView}">
+        <ShellContent Title="Reports" Route="Reports" ContentTemplate="{DataTemplate local:ReportsView}">
             <ShellContent.Icon>
-                <FontImageSource FontFamily="FontAwesomeSolid" Glyph="file-medical-alt" />
+                <FontImageSource FontFamily="FontAwesomeSolid" Size="Large" Glyph="File-Medical-Alt" />
             </ShellContent.Icon>
         </ShellContent>
         <Tab Title="Settings">
             <Tab.Icon>
-                <FontImageSource FontFamily="FontAwesomeSolid" Glyph="cog"/>
+                <FontImageSource FontFamily="FontAwesomeSolid" Size="Large" Glyph="Cog"/>
             </Tab.Icon>
-            <ShellContent Title="General" Route="settings" ContentTemplate="{DataTemplate local:SettingsView}"/>
-            <ShellContent Title="Tags" Route="tags" ContentTemplate="{DataTemplate local:TagsView}"/>
-            <ShellContent Title="Templates" Route="templates" ContentTemplate="{DataTemplate local:TemplatesView}"/>
+            <ShellContent Title="General" Route="Settings" ContentTemplate="{DataTemplate local:SettingsView}"/>
+            <ShellContent Title="Tags" Route="Tags" ContentTemplate="{DataTemplate local:TagsView}"/>
+            <ShellContent Title="Templates" Route="Templates" ContentTemplate="{DataTemplate local:TemplatesView}"/>
         </Tab>
     </TabBar>
 </Shell>

@@ -35,9 +35,13 @@ namespace Mobile.ViewModels
 
         #region Methods
 
-        public ReportDetailViewModel(ISettingsService settingsService, IReportsDataService reportsDataService) : base(settingsService)
+        public ReportDetailViewModel(
+            ISettingsService settingsService,
+            IDialogService dialogService,
+            IReportsDataService reportsDataService) : base(settingsService)
         {
             Title = "Report";
+            this.dialogService = dialogService;
             this.reportsDataService = reportsDataService;
             
             MessagingCenter.Subscribe<ReportDetailTagsViewModel, IEnumerable<string>>(this, "UpdateTags", ExecuteUpdateTags);
@@ -68,9 +72,19 @@ namespace Mobile.ViewModels
             if (!IsBusy)
             {
                 IsBusy = true;
-                await reportsDataService.DeleteReport(Report.Id);
-                MessagingCenter.Send(this, "DeleteReport", Report.Id);
-                await Shell.Current.GoToAsync("..?");
+
+                var confirm = await dialogService.InputBox("Confirmation", "Are you sure that you want to delete this item?", "Yes", "No");
+                if (confirm)
+                {
+                    if (!string.IsNullOrEmpty(Report.Id))
+                    {
+                        await reportsDataService.DeleteReport(Report.Id);
+                        MessagingCenter.Send(this, "DeleteReport", Report.Id);
+                    }
+
+                    await Shell.Current.GoToAsync("..?");
+                }
+
                 IsBusy = false;
             }
         }
@@ -82,7 +96,7 @@ namespace Mobile.ViewModels
                 IsBusy = true;
                 var json = JsonSerializer.Serialize(Report.Tags);
                 var encoded = HttpUtility.UrlEncode(json);
-                await Shell.Current.GoToAsync($"reportdetailtags?SelectedTags={encoded}");
+                await Shell.Current.GoToAsync($"ReportDetailTags?SelectedTags={encoded}");
                 IsBusy = false;
             }
         }
@@ -125,6 +139,7 @@ namespace Mobile.ViewModels
 
         private Report report;
         private IReportsDataService reportsDataService;
+        private IDialogService dialogService;
 
         #endregion
     }

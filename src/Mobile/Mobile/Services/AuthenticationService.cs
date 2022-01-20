@@ -40,6 +40,11 @@ namespace Mobile.Services
                 {
                     result = true;
                 }
+                else
+                {
+                    credentials = await RefreshCredentials(true);
+                    result = true;
+                }
             }
             return result; 
         }

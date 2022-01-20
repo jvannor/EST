@@ -6,21 +6,45 @@ namespace Mobile.ViewModels
 {
     internal class SettingsViewModel :ViewModelBase
     {
+        #region Commands
+
         public Command LogoutCommand => new Command(ExecuteLogoutCommand);
 
-        public SettingsViewModel(ISettingsService settings, IAuthenticationService authentication) : base(settings)
+        #endregion
+
+        #region Properties
+
+        public string UserName
         {
-            System.Diagnostics.Debug.WriteLine("SettingsViewModel::ctor()");
-            authenticationService = authentication;
-            Title = "General Settings";
+            get { return userName; }
+            set { SetProperty(ref userName, value); }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public SettingsViewModel(ISettingsService settingsService, IAuthenticationService authenticationService) : base(settingsService)
+        {
+            Title = "General";
+            UserName = settingsService.UserName;
+
+            this.authenticationService = authenticationService;
         }
 
         public async void ExecuteLogoutCommand()
         {
             await authenticationService.Logout();
-            await Shell.Current.GoToAsync("//login");
+            await Shell.Current.GoToAsync("//Login");
         }
 
+        #endregion
+
+        #region Fields
+
         private IAuthenticationService authenticationService;
+        private string userName;
+
+        #endregion
     }
 }

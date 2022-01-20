@@ -122,7 +122,7 @@ namespace Mobile.ViewModels
             {
                 var reportJson = JsonSerializer.Serialize(report);
                 var reportString = HttpUtility.UrlEncode(reportJson);
-                await Shell.Current.GoToAsync($"reportdetail?Report={reportString}");
+                await Shell.Current.GoToAsync($"ReportDetail?Report={reportString}");
             }
         }
 

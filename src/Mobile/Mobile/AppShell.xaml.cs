@@ -11,9 +11,11 @@ namespace Mobile
         {
             InitializeComponent();
 
-            Routing.RegisterRoute("reportdetail", typeof(ReportDetailView));
-            Routing.RegisterRoute("reportdetailtags", typeof(ReportDetailTagsView));
-            Routing.RegisterRoute("tagdetails", typeof(TagDetailView));
+            Routing.RegisterRoute("ReportDetail", typeof(ReportDetailView));
+            Routing.RegisterRoute("ReportDetailTags", typeof(ReportDetailTagsView));
+            Routing.RegisterRoute("TagDetails", typeof(TagDetailView));
+            Routing.RegisterRoute("TemplateDetail", typeof(TemplateDetailView));
+            Routing.RegisterRoute("TemplateDetailTags", typeof(TemplateDetailTagsView));
         }
     }
 }

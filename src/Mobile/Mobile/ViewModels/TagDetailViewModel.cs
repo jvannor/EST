@@ -38,14 +38,15 @@ namespace Mobile.ViewModels
 
         #region Methods
 
-        public TagDetailViewModel(ISettingsService ss) : base(ss)
+        public TagDetailViewModel(ISettingsService settingsService, IDialogService dialogService) : base(settingsService)
         {
             Title = "Tag";
+            this.dialogService = dialogService;
         }
 
         public void ApplyQueryAttributes(IDictionary<string, string> query)
         {
-            var decoded = HttpUtility.UrlDecode(query["tag"]);
+            var decoded = HttpUtility.UrlDecode(query["Tag"]);
             tag1 = Tag = decoded;
         }
 
@@ -56,12 +57,12 @@ namespace Mobile.ViewModels
 
         private async void ExecuteDeleteCommand()
         {
-            if (!string.IsNullOrEmpty(tag1))
+            var confirm = await dialogService.InputBox("Confirmation", "Are you sure that you want to delete this item?", "Yes", "No");
+            if (confirm)
             {
                 MessagingCenter.Send(this, "DeleteTag", tag1);
+                await Shell.Current.GoToAsync("..?");
             }
-
-            await Shell.Current.GoToAsync("..?");
         }
 
         private async void ExecuteUpdateCommand()
@@ -74,6 +75,7 @@ namespace Mobile.ViewModels
 
         #region Fields
 
+        private IDialogService dialogService;
         private string tag1;
         private string tag2;
 

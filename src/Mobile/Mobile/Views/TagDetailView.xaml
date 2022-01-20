@@ -7,40 +7,22 @@
     utilities:ViewModelLocator.AutoWireViewModel="True"
     x:Class="Mobile.Views.TagDetailView">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Save" Command="{Binding UpdateCommand}"/>
+        <ToolbarItem Text="Delete" Command="{Binding DeleteCommand}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource FontFamily="FontAwesomeSolid" Size="Large" Glyph="Trash"/>
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+        <ToolbarItem Text="Save" Command="{Binding UpdateCommand}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource FontFamily="FontAwesomeSolid" Size="Large" Glyph="Save"/>
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
     </ContentPage.ToolbarItems>
-    <Shell.BackButtonBehavior>
-        <BackButtonBehavior TextOverride="Cancel"/>
-    </Shell.BackButtonBehavior>
     <ContentPage.Content>
         <StackLayout Margin="16,8,16,0">
-            <Label Text="Tag" FontSize="13" />
+            <Label Text="Tag" FontSize="Small" />
             <Entry Placeholder="Value" Text="{Binding Tag}"/>
             <BoxView HeightRequest="8"/>
-
-            <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
-                <Frame BorderColor="{StaticResource DarkPrimaryColor}" HasShadow="False" Padding="8,4,8,4">
-                    <Label Text="Cancel">
-                        <Label.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding CancelCommand}" />
-                        </Label.GestureRecognizers>
-                    </Label>
-                </Frame>
-                <Frame BorderColor="{StaticResource DarkPrimaryColor}" HasShadow="False" Padding="8,4,8,4">
-                    <Label Text="Delete">
-                        <Label.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding DeleteCommand}" />
-                        </Label.GestureRecognizers>
-                    </Label>
-                </Frame>
-                <Frame BorderColor="{StaticResource DarkPrimaryColor}" HasShadow="False" Padding="8,4,8,4">
-                    <Label Text="Save">
-                        <Label.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding UpdateCommand}"/>
-                        </Label.GestureRecognizers>
-                    </Label>
-                </Frame>
-            </StackLayout>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

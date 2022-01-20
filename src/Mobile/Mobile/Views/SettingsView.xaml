@@ -8,7 +8,24 @@
     x:Class="Mobile.Views.SettingsView">
     <ContentPage.Content>
         <StackLayout Margin="16,8,16,0">
-            <Button Text="Logout" Command="{Binding LogoutCommand}" />
+            <Label Text="Epilepsy Seizure Tracker" FontSize="Medium"/>
+            <BoxView HeightRequest="8"/>
+
+            <Label Text="Version" FontSize="Small"/>
+            <Entry Text="1" IsReadOnly="True"/>
+            <BoxView HeightRequest="8"/>
+
+            <Label Text="User" FontSize="Small"/>
+            <Entry Text="{Binding UserName}" IsReadOnly="True"/>
+            <BoxView HeightRequest="8"/>
+
+            <Frame BorderColor="{StaticResource DarkPrimaryColor}" HasShadow="False" Padding="8,4,8,4">
+                <Label Text="Logout" HorizontalOptions="Center" FontSize="Medium">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding LogoutCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+            </Frame>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

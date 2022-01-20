@@ -13,7 +13,7 @@
     <ContentPage.Content>
         <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
             <ActivityIndicator Color="Accent" IsRunning="True" IsVisible="True" />
-            <Label Text="Loading..." />
+            <Label Text="Loading..." FontSize="Medium" />
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

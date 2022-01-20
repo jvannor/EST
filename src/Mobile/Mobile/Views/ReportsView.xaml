@@ -32,22 +32,22 @@
                             </Frame.GestureRecognizers>
                             <StackLayout>
                                 <StackLayout Orientation="Horizontal">
-                                    <Label Text="{Binding Observed, Converter={StaticResource dateTimeToFriendlyString}}" FontSize="16"/>
-                                    <Label Text="{Binding Observed, StringFormat='{0:t}'}" FontSize="16" HorizontalOptions="EndAndExpand"/>
+                                    <Label Text="{Binding Observed, Converter={StaticResource dateTimeToFriendlyString}}" FontSize="Medium"/>
+                                    <Label Text="{Binding Observed, StringFormat='{0:t}'}" FontSize="Medium" HorizontalOptions="EndAndExpand"/>
                                 </StackLayout>
-                                <Label Text="{Binding Category}" FontSize="13" LineBreakMode="NoWrap"/>
+                                <Label Text="{Binding Category}" FontSize="Small" LineBreakMode="NoWrap"/>
                                 <FlexLayout BindableLayout.ItemsSource="{Binding Tags}" Direction="Row" JustifyContent="Start" Wrap="Wrap">
                                     <BindableLayout.ItemTemplate>
                                         <DataTemplate>
                                             <Frame HasShadow="False" Padding="0,0,8,8">
                                                 <Frame BorderColor="{StaticResource DarkPrimaryColor}" BackgroundColor="{StaticResource LightPrimaryColor}" HasShadow="False" Padding="8,4,8,4">
-                                                    <Label Text="{Binding}" FontSize="13"/>
+                                                    <Label Text="{Binding}" FontSize="Small"/>
                                                 </Frame>
                                             </Frame>
                                         </DataTemplate>
                                     </BindableLayout.ItemTemplate>
                                 </FlexLayout>
-                                <Label Text="{Binding Description}" FontSize="13"/>
+                                <Label Text="{Binding Description}" FontSize="Small"/>
                              </StackLayout>
                         </Frame>
                     </DataTemplate>

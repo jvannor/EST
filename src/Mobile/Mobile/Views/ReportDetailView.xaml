@@ -8,35 +8,41 @@
     utilities:ViewModelLocator.AutoWireViewModel="True"
     x:Class="Mobile.Views.ReportDetailView">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Save" Command="{Binding SaveCommand}" />
+        <ToolbarItem Text="Delete" Command="{Binding DeleteCommand}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource FontFamily="FontAwesomeSolid" Size="Large" Glyph="Trash"/>
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+        <ToolbarItem Text="Save" Command="{Binding SaveCommand}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource FontFamily="FontAwesomeSolid" Size="Large" Glyph="Save"/>
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
     </ContentPage.ToolbarItems>
-    <Shell.BackButtonBehavior>
-        <BackButtonBehavior TextOverride="Cancel"/>
-    </Shell.BackButtonBehavior>
     <ContentPage.Content>
         <ScrollView VerticalScrollBarVisibility="Never" Margin="16,8,16,0">
             <StackLayout>
-                <Label Text="Date" FontSize="13" />
-                <DatePicker Date="{Binding Report.Date}" Format="D" FontSize="16"/>
+                <Label Text="Date" FontSize="Small" />
+                <DatePicker Date="{Binding Report.Date}" Format="D" FontSize="Medium"/>
                 <BoxView HeightRequest="8"/>
 
-                <Label Text="Time" FontSize="13" />
+                <Label Text="Time" FontSize="Small" />
                 <TimePicker Time="{Binding Report.Time}"/>
                 <BoxView HeightRequest="8"/>
 
-                <Label Text="Category" FontSize="13" />
-                <Picker Title="Category" ItemsSource="{Binding Report.Categories}" SelectedItem="{Binding Report.Category}" FontSize="16" />
+                <Label Text="Category" FontSize="Small" />
+                <Picker Title="Category" ItemsSource="{Binding Report.Categories}" SelectedItem="{Binding Report.Category}" FontSize="Medium" />
                 <BoxView HeightRequest="8"/>
 
-                <Label Text="Subcategory" FontSize="13" />
-                <Picker Title="Subcategory" ItemsSource="{Binding Report.Subcategories}" SelectedItem="{Binding Report.Subcategory}" FontSize="16" />
+                <Label Text="Subcategory" FontSize="Small" />
+                <Picker Title="Subcategory" ItemsSource="{Binding Report.Subcategories}" SelectedItem="{Binding Report.Subcategory}" FontSize="Medium" />
                 <BoxView HeightRequest="8"/>
 
-                <Label Text="Detail" FontSize="13"/>
-                <Picker Title="Detail" ItemsSource="{Binding Report.Details}" SelectedItem="{Binding Report.Detail}" FontSize="16"/>
+                <Label Text="Detail" FontSize="Small"/>
+                <Picker Title="Detail" ItemsSource="{Binding Report.Details}" SelectedItem="{Binding Report.Detail}" FontSize="Medium"/>
                 <BoxView HeightRequest="8"/>
 
-                <Label Text="Tags" FontSize="13">
+                <Label Text="Tags" FontSize="Small">
                     <Label.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding GoToTagsCommand}"/>
                     </Label.GestureRecognizers>
@@ -49,7 +55,7 @@
                         <DataTemplate>
                             <Frame HasShadow="False" Padding="0,0,8,8">
                                 <Frame BorderColor="{StaticResource DarkPrimaryColor}" BackgroundColor="{StaticResource LightPrimaryColor}" HasShadow="False" Padding="8,4,8,4">
-                                    <Label Text="{Binding}" FontSize="13"/>
+                                    <Label Text="{Binding}" FontSize="Small"/>
                                 </Frame>
                             </Frame>
                         </DataTemplate>
@@ -57,34 +63,9 @@
                 </FlexLayout>
                 <BoxView HeightRequest="8"/>
                 
-                <Label Text="Description" FontSize="13"/>
-                <Editor AutoSize="TextChanges" Placeholder="Enter description here."  Text="{Binding Report.Description}" FontSize="16" />
-                <BoxView HeightRequest="8"/>
-
-                <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
-                   <Frame BorderColor="{StaticResource DarkPrimaryColor}" HasShadow="False" Padding="8,4,8,4">
-                        <Label Text="Cancel">
-                            <Label.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding CancelCommand}" />
-                            </Label.GestureRecognizers>
-                        </Label>
-                    </Frame>
-                    <Frame BorderColor="{StaticResource DarkPrimaryColor}" HasShadow="False" Padding="8,4,8,4">
-                        <Label Text="Delete">
-                            <Label.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding DeleteCommand}" />
-                            </Label.GestureRecognizers>
-                        </Label>
-                    </Frame>
-                    <Frame BorderColor="{StaticResource DarkPrimaryColor}" HasShadow="False" Padding="8,4,8,4">
-                        <Label Text="Save">
-                            <Label.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding SaveCommand}"/>
-                            </Label.GestureRecognizers>
-                        </Label>
-                    </Frame>
-                </StackLayout>
-                
+                <Label Text="Description" FontSize="Small"/>
+                <Editor AutoSize="TextChanges" Placeholder="Enter description here."  Text="{Binding Report.Description}" FontSize="Medium" />
+                <BoxView HeightRequest="8"/>                
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>

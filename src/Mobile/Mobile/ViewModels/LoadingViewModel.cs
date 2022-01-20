@@ -27,11 +27,11 @@ namespace Mobile.ViewModels
                 var authenticated = await authenticationService.Authenticated();
                 if (authenticated)
                 {
-                    await Shell.Current.GoToAsync("//home");
+                    await Shell.Current.GoToAsync("//Home");
                 }
                 else
                 {
-                    await Shell.Current.GoToAsync("//login");
+                    await Shell.Current.GoToAsync("//Login");
                 }
             }
             catch(Exception ex)

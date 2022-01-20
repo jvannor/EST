@@ -28,7 +28,7 @@ namespace Mobile.ViewModels
                 var success = await authenticationService.Login();
                 if (success)
                 {
-                    await Shell.Current.GoToAsync("//home");
+                    await Shell.Current.GoToAsync("//Home");
                 }
             }
             catch(Exception ex)

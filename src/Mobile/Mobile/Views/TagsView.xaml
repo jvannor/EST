@@ -8,11 +8,15 @@
     utilities:ViewModelLocator.AutoWireViewModel="True"
     x:Class="Mobile.Views.TagsView">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="New" Command="{Binding NewCommand}" />
+        <ToolbarItem Text="New" Command="{Binding NewCommand}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource FontFamily="FontAwesomeSolid" Size="Large" Glyph="Plus"/>
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
-        <RefreshView IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshCommand}">
-            <CollectionView ItemsSource="{Binding SettingsDocument.Tags}" Margin="16,8,16,0" VerticalScrollBarVisibility="Never">
+        <RefreshView IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshCommand}" Margin="16,8,16,0">
+            <CollectionView ItemsSource="{Binding SettingsDocument.Tags}" VerticalScrollBarVisibility="Never">
                 <CollectionView.ItemsLayout>
                     <LinearItemsLayout
                         Orientation="Vertical"
@@ -25,7 +29,7 @@
                                 <Frame.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:TagsViewModel}}, Path=EditCommand}" CommandParameter="{Binding}"/>
                                 </Frame.GestureRecognizers>
-                                <Label Text="{Binding}" FontSize="13" />
+                                <Label Text="{Binding}" FontSize="Small" />
                             </Frame>
                         </StackLayout>                        
                     </DataTemplate>
