@@ -6,6 +6,7 @@
     xmlns:vm="clr-namespace:Mobile.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+    IsBusy="{Binding IsBusy}"
     Title="{Binding Title}"
     utilities:ViewModelLocator.AutoWireViewModel="True"
     x:Class="Mobile.Views.ReportsView">
@@ -32,22 +33,22 @@
                             </Frame.GestureRecognizers>
                             <StackLayout>
                                 <StackLayout Orientation="Horizontal">
-                                    <Label Text="{Binding Observed, Converter={StaticResource dateTimeToFriendlyString}}" FontSize="Medium"/>
-                                    <Label Text="{Binding Observed, StringFormat='{0:t}'}" FontSize="Medium" HorizontalOptions="EndAndExpand"/>
+                                    <Label Text="{Binding Observed, Converter={StaticResource dateTimeToFriendlyString}}" FontSize="Medium" TextColor="{StaticResource PrimaryText}"/>
+                                    <Label Text="{Binding Observed, StringFormat='{0:t}'}" FontSize="Medium" HorizontalOptions="EndAndExpand" TextColor="{StaticResource PrimaryText}"/>
                                 </StackLayout>
-                                <Label Text="{Binding Category}" FontSize="Small" LineBreakMode="NoWrap"/>
+                                <Label Text="{Binding Category}" FontSize="Small" LineBreakMode="NoWrap" TextColor="{StaticResource PrimaryText}"/>
                                 <FlexLayout BindableLayout.ItemsSource="{Binding Tags}" Direction="Row" JustifyContent="Start" Wrap="Wrap">
                                     <BindableLayout.ItemTemplate>
                                         <DataTemplate>
                                             <Frame HasShadow="False" Padding="0,0,8,8">
                                                 <Frame BorderColor="{StaticResource DarkPrimaryColor}" BackgroundColor="{StaticResource LightPrimaryColor}" HasShadow="False" Padding="8,4,8,4">
-                                                    <Label Text="{Binding}" FontSize="Small"/>
+                                                    <Label Text="{Binding}" FontSize="Small" TextColor="{StaticResource PrimaryText}"/>
                                                 </Frame>
                                             </Frame>
                                         </DataTemplate>
                                     </BindableLayout.ItemTemplate>
                                 </FlexLayout>
-                                <Label Text="{Binding Description}" FontSize="Small"/>
+                                <Label Text="{Binding Description}" FontSize="Small" TextColor="{StaticResource PrimaryText}"/>
                              </StackLayout>
                         </Frame>
                     </DataTemplate>

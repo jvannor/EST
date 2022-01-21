@@ -4,23 +4,24 @@
     xmlns:utilities="clr-namespace:Mobile.Utilities"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     utilities:ViewModelLocator.AutoWireViewModel="True"
+    IsBusy="{Binding IsBusy}"
     Title="{Binding Title}"
     x:Class="Mobile.Views.SettingsView">
     <ContentPage.Content>
-        <StackLayout Margin="16,8,16,0">
-            <Label Text="Epilepsy Seizure Tracker" FontSize="Medium"/>
+        <StackLayout Margin="16,16,16,0">
+            <Label Text="Epileptic Seizure Tracker" FontSize="Medium" TextColor="{StaticResource PrimaryText}"/>
             <BoxView HeightRequest="8"/>
 
-            <Label Text="Version" FontSize="Small"/>
-            <Entry Text="1" IsReadOnly="True"/>
+            <Label Text="Version" FontSize="Small" TextColor="{StaticResource SecondaryText}"/>
+            <Entry Text="1" IsReadOnly="True" FontSize="Medium" TextColor="{StaticResource PrimaryText}"/>
             <BoxView HeightRequest="8"/>
 
-            <Label Text="User" FontSize="Small"/>
-            <Entry Text="{Binding UserName}" IsReadOnly="True"/>
+            <Label Text="User" FontSize="Small" TextColor="{StaticResource SecondaryText}"/>
+            <Entry Text="{Binding UserName}" FontSize="Medium" IsReadOnly="True" TextColor="{StaticResource PrimaryText}"/>
             <BoxView HeightRequest="8"/>
 
             <Frame BorderColor="{StaticResource DarkPrimaryColor}" HasShadow="False" Padding="8,4,8,4">
-                <Label Text="Logout" HorizontalOptions="Center" FontSize="Medium">
+                <Label Text="Logout" HorizontalOptions="Center" FontSize="Medium" TextColor="{StaticResource PrimaryText}">
                     <Label.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding LogoutCommand}" />
                     </Label.GestureRecognizers>

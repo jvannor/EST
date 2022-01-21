@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Mobile.ServiceContracts;
 using Xamarin.Forms;
 
@@ -27,15 +28,30 @@ namespace Mobile.ViewModels
         public SettingsViewModel(ISettingsService settingsService, IAuthenticationService authenticationService) : base(settingsService)
         {
             Title = "General";
-            UserName = settingsService.UserName;
 
+            UserName = settingsService?.UserName;
             this.authenticationService = authenticationService;
         }
 
         public async void ExecuteLogoutCommand()
         {
-            await authenticationService.Logout();
-            await Shell.Current.GoToAsync("//Login");
+            try
+            {
+                if (!IsBusy)
+                {
+                    IsBusy = true;
+
+                    await authenticationService.Logout();
+                    await Shell.Current.GoToAsync("//Login");
+
+                    IsBusy = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                IsBusy = false;
+                Debug.WriteLine($"SettingsViewModel::ExecuteLogoutCommand() encountered an exception; {ex.GetType().Name}; {ex.Message}");
+            }
         }
 
         #endregion

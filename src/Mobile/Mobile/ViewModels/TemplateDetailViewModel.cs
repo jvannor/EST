@@ -45,47 +45,71 @@ namespace Mobile.ViewModels
 
         public void ApplyQueryAttributes(IDictionary<string, string> query)
         {
-            if (query.ContainsKey("Template"))
+            if (!IsBusy)
             {
-                if (!string.IsNullOrEmpty(query["Template"]))
+                IsBusy = true;
+                if (query.ContainsKey("Template"))
                 {
-                    var decoded = HttpUtility.UrlDecode(query["Template"]);
-                    ReportTemplate = JsonSerializer.Deserialize<ReportTemplate>(decoded);
+                    if (!string.IsNullOrEmpty(query["Template"]))
+                    {
+                        var decoded = HttpUtility.UrlDecode(query["Template"]);
+                        ReportTemplate = JsonSerializer.Deserialize<ReportTemplate>(decoded);
+                    }
+                    else
+                    {
+                        ReportTemplate = new ReportTemplate();
+                    }
                 }
-                else
-                {
-                    ReportTemplate = new ReportTemplate();
-                }
+                IsBusy = false;
             }
         }
 
         public async void ExecuteGoToTagsCommand(object parameter)
         {
-            
-            var json = JsonSerializer.Serialize(ReportTemplate.Content.Tags);
-            var encoded = HttpUtility.UrlEncode(json);
-            await Shell.Current.GoToAsync($"TemplateDetailTags?SelectedTags={encoded}");
+            if (!IsBusy)
+            {
+                IsBusy = true;
+                var json = JsonSerializer.Serialize(ReportTemplate.Content.Tags);
+                var encoded = HttpUtility.UrlEncode(json);
+                await Shell.Current.GoToAsync($"TemplateDetailTags?SelectedTags={encoded}");
+                IsBusy = false;
+            }
         }
 
         public async void ExecuteDeleteCommand(object parameter)
         {
-            var confirm = await dialogService.InputBox("Confirmation", "Are you sure that you want to delete this item?", "Yes", "no");
-            if (confirm)
+            if (!IsBusy)
             {
-                MessagingCenter.Send(this, "DeleteReportTemplate", ReportTemplate);
-                await Shell.Current.GoToAsync("..?");
+                IsBusy = true;
+                var confirm = await dialogService.InputBox("Confirmation", "Are you sure that you want to delete this item?", "Yes", "no");
+                if (confirm)
+                {
+                    MessagingCenter.Send(this, "DeleteReportTemplate", ReportTemplate);
+                    await Shell.Current.GoToAsync("..?");
+                }
+                IsBusy = false;
             }
         }
 
         public async void ExecuteSaveCommand(object parameter)
         {
-            MessagingCenter.Send(this, "SaveReportTemplate", ReportTemplate);
-            await Shell.Current.GoToAsync("..?");
+            if (!IsBusy)
+            {
+                IsBusy = true;
+                MessagingCenter.Send(this, "SaveReportTemplate", ReportTemplate);
+                await Shell.Current.GoToAsync("..?");
+                IsBusy = false;
+            }
         }
 
         public void ExecuteUpdateTags(TemplateDetailTagsViewModel model, IEnumerable<string> tags)
         {
-            ReportTemplate.Content.Tags = new ObservableCollection<string>(tags);
+            if (!IsBusy)
+            {
+                IsBusy = true;
+                ReportTemplate.Content.Tags = new ObservableCollection<string>(tags);
+                IsBusy = false;
+            }
         }
 
         #endregion

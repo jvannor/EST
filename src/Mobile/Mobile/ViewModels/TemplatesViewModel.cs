@@ -5,6 +5,7 @@ using Mobile.ServiceContracts;
 using System.Web;
 using System.Text.Json;
 using System.Linq;
+using System.Diagnostics;
 
 namespace Mobile.ViewModels
 {
@@ -13,7 +14,9 @@ namespace Mobile.ViewModels
         #region Commands
 
         public Command EditCommand => new Command(ExecuteEditCommand);
+
         public Command NewCommand => new Command(ExecuteNewCommand);
+
         public Command RefreshCommand => new Command(ExecuteRefreshCommand);
 
         #endregion
@@ -58,7 +61,9 @@ namespace Mobile.ViewModels
 
         #region Methods
 
-        public TemplatesViewModel(ISettingsService settingsService, ISettingsDocumentService settingsDocumentService) : base(settingsService)
+        public TemplatesViewModel(
+            ISettingsService settingsService,
+            ISettingsDocumentService settingsDocumentService) : base(settingsService)
         {
             Title = "Templates";
             this.settingsDocumentService = settingsDocumentService;
@@ -71,58 +76,124 @@ namespace Mobile.ViewModels
 
         private async void Init()
         {
-            SettingsDocument = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
+            try
+            {
+                if (!IsBusy)
+                {
+                    IsBusy = true;
+                    SettingsDocument = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
+                    IsBusy = false;
+                }
+            }
+            catch(Exception ex)
+            {
+                IsBusy = false;
+                Debug.WriteLine($"TemplatesViewModel::Init() encountered an exception; {ex.GetType().Name}; {ex.Message}");
+            }
         }
 
         public async void ExecuteEditCommand(object parameter)
         {
-            var json = JsonSerializer.Serialize(parameter);
-            var encoded = HttpUtility.UrlEncode(json);
-            await Shell.Current.GoToAsync($"TemplateDetail?Template={encoded}");
+            if (!IsBusy)
+            {
+                IsBusy = true;
+
+                var json = JsonSerializer.Serialize(parameter);
+                var encoded = HttpUtility.UrlEncode(json);
+                await Shell.Current.GoToAsync($"TemplateDetail?Template={encoded}");
+
+                IsBusy = false;
+            }
         }
 
         public async void ExecuteNewCommand()
         {
-            await Shell.Current.GoToAsync("TemplateDetail?Template=");
+            if (!IsBusy)
+            {
+                IsBusy = true;
+                await Shell.Current.GoToAsync("TemplateDetail?Template=");
+                IsBusy = false;
+            }
         }
 
         public async void ExecuteRefreshCommand()
         {
             if (!IsBusy)
             {
-                IsBusy = true;
+                try
+                {
+                    IsBusy = true;
+                    SettingsDocument = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
+                    IsBusy = false;
+                }
+                catch(Exception ex)
+                {
+                    IsBusy = false;
+                    Debug.WriteLine($"TemplatesViewModel::ExecuteRefreshCommand() encountered an exception; {ex.GetType().Name}; {ex.Message}");
+                }
 
-                SettingsDocument = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
                 IsRefreshing = false;
-
-                IsBusy = false;
             }
         }
 
         public async void ExecuteDeleteReportTemplate(TemplateDetailViewModel mode, ReportTemplate template)
         {
-            var target = SettingsDocument.Templates.Where(t => t.Title == template.Title).FirstOrDefault();
-            if (target != null)
+            if (!IsBusy)
             {
-                SettingsDocument.Templates.Remove(target);
-                await settingsDocumentService.UpdateSettingsDocument(SettingsDocument);
+                IsBusy = true;
+
+                var target = SettingsDocument.Templates.Where(t => t.Title == template.Title).FirstOrDefault();
+                if (target != null)
+                {
+                    try
+                    {
+                        await settingsDocumentService.UpdateSettingsDocument(SettingsDocument);
+                        SettingsDocument.Templates.Remove(target);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"TemplatesViewModel::ExecuteDeleteReportTemplate() encountered an exception; {ex.GetType().Name}; {ex.Message}");
+                    }
+                }
+
+                IsBusy = false;
             }
         }
 
         public async void ExecuteSaveReportTemplate(TemplateDetailViewModel model, ReportTemplate template)
         {
-            var target = SettingsDocument.Templates.Where(t => t.Title == template.Title).FirstOrDefault();
-            if (target != null)
+            if (!IsBusy)
             {
-                var idx = SettingsDocument.Templates.IndexOf(target);
-                SettingsDocument.Templates[idx] = template;
-                await settingsDocumentService.UpdateSettingsDocument(SettingsDocument);
-            }
-            else
-            {
-                SettingsDocument.Templates.Add(template);
-                await settingsDocumentService.UpdateSettingsDocument(SettingsDocument);
+                IsBusy = true;
 
+                var target = SettingsDocument.Templates.Where(t => t.Title == template.Title).FirstOrDefault();
+                if (target != null)
+                {
+                    try
+                    {
+                        var idx = SettingsDocument.Templates.IndexOf(target);
+                        SettingsDocument.Templates[idx] = template;
+                        await settingsDocumentService.UpdateSettingsDocument(SettingsDocument);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"TemplatesViewModel::ExecuteSaveReportTemplate() encountered an exception; {ex.GetType().Name}; {ex.Message}");
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        await settingsDocumentService.UpdateSettingsDocument(SettingsDocument);
+                        SettingsDocument.Templates.Add(template);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"TemplatesViewModel::ExecuteSaveReportTemplate() encountered an exception; {ex.GetType().Name}; {ex.Message}");
+                    }
+                }
+
+                IsBusy = false;
             }
         }
 

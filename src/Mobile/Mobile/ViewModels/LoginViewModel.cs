@@ -18,6 +18,7 @@ namespace Mobile.ViewModels
 
         public LoginViewModel(ISettingsService settings, IAuthenticationService authentication) : base(settings)
         {
+            Title = "Login";
             authenticationService = authentication;
         }
 
@@ -25,14 +26,22 @@ namespace Mobile.ViewModels
         {
             try
             {
-                var success = await authenticationService.Login();
-                if (success)
+                if (!IsBusy)
                 {
-                    await Shell.Current.GoToAsync("//Home");
+                    IsBusy = true;
+
+                    var success = await authenticationService.Login();
+                    if (success)
+                    {
+                        await Shell.Current.GoToAsync("//Home");
+                    }
+
+                    IsBusy = false;
                 }
             }
             catch(Exception ex)
             {
+                IsBusy = false;
                 Debug.WriteLine($"LoginViewModel::OnLogin() experienced an unexpected exception, {ex.GetType().Name}; {ex.Message}");
             }
         }

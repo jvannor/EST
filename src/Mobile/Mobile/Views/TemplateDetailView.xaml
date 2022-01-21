@@ -3,6 +3,7 @@
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:utilities="clr-namespace:Mobile.Utilities"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    IsBusy="{Binding IsBusy}"
     Title="{Binding Title}"
     utilities:ViewModelLocator.AutoWireViewModel="True"
     x:Class="Mobile.Views.TemplateDetailView">
@@ -20,43 +21,42 @@
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <StackLayout Margin="16,8,16,0">
-            <Label Text="Title" FontSize="Small"/>
-            <Entry Text="{Binding ReportTemplate.Title}" Placeholder="Template Title" FontSize="16"/>
+            <Label Text="Title" FontSize="Small" TextColor="{StaticResource SecondaryText}"/>
+            <Entry Text="{Binding ReportTemplate.Title}" Placeholder="Template Title" FontSize="Medium" TextColor="{StaticResource PrimaryText}"/>
             <BoxView HeightRequest="8"/>
 
-            <Label Text="Category" FontSize="Small"/>
-            <Picker Title="Category" ItemsSource="{Binding ReportTemplate.Content.Categories}" SelectedItem="{Binding ReportTemplate.Content.Category}" FontSize="16" />
+            <Label Text="Category" FontSize="Small" TextColor="{StaticResource SecondaryText}"/>
+            <Picker Title="Category" ItemsSource="{Binding ReportTemplate.Content.Categories}" SelectedItem="{Binding ReportTemplate.Content.Category}" FontSize="Medium" TextColor="{StaticResource PrimaryText}"/>
             <BoxView HeightRequest="8"/>
 
-            <Label Text="Subcategory" FontSize="Small"/>
-            <Picker Title="Subcategory" ItemsSource="{Binding ReportTemplate.Content.Subcategories}" SelectedItem="{Binding ReportTemplate.Content.Subcategory}" FontSize="16" />
+            <Label Text="Subcategory" FontSize="Small" TextColor="{StaticResource SecondaryText}"/>
+            <Picker Title="Subcategory" ItemsSource="{Binding ReportTemplate.Content.Subcategories}" SelectedItem="{Binding ReportTemplate.Content.Subcategory}" FontSize="Medium" TextColor="{StaticResource PrimaryText}"/>
             <BoxView HeightRequest="8"/>
 
-            <Label Text="Detail" FontSize="Small"/>
-            <Picker Title="Detail" ItemsSource="{Binding ReportTemplate.Content.Details}" SelectedItem="{Binding ReportTemplate.Content.Detail}" FontSize="16" />
+            <Label Text="Detail" FontSize="Small" TextColor="{StaticResource SecondaryText}"/>
+            <Picker Title="Detail" ItemsSource="{Binding ReportTemplate.Content.Details}" SelectedItem="{Binding ReportTemplate.Content.Detail}" FontSize="Medium" TextColor="{StaticResource PrimaryText}"/>
             <BoxView HeightRequest="8"/>
 
-            <Label Text="Tags" FontSize="Small">
+            <Label Text="Tags" FontSize="Small" TextColor="{StaticResource SecondaryText}">
                 <Label.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding GoToTagsCommand}"/>
                 </Label.GestureRecognizers>
             </Label>
             <FlexLayout BindableLayout.ItemsSource="{Binding ReportTemplate.Content.Tags}" BindableLayout.EmptyView="None" Direction="Row" JustifyContent="Start" Wrap="Wrap">
                 <FlexLayout.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding GoToTagsCommand}" />
+                    <TapGestureRecognizer Command="{Binding GoToTagsCommand}"/>
                 </FlexLayout.GestureRecognizers>
                 <BindableLayout.ItemTemplate>
                     <DataTemplate>
                         <Frame HasShadow="False" Padding="0,0,8,8">
                             <Frame BorderColor="{StaticResource DarkPrimaryColor}" BackgroundColor="{StaticResource LightPrimaryColor}" HasShadow="False" Padding="8,4,8,4">
-                                <Label Text="{Binding}" FontSize="Small"/>
+                                <Label Text="{Binding}" FontSize="Small" TextColor="{StaticResource PrimaryText}"/>
                             </Frame>
                         </Frame>
                     </DataTemplate>
                 </BindableLayout.ItemTemplate>
             </FlexLayout>
             <BoxView HeightRequest="8"/>
-
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

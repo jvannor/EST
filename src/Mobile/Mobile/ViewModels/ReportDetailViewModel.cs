@@ -49,11 +49,18 @@ namespace Mobile.ViewModels
 
         public void ApplyQueryAttributes(IDictionary<string, string> query)
         {
-            if (query.ContainsKey("Report"))
+            if (!IsBusy)
             {
-                var encoded = query["Report"];
-                var json = HttpUtility.UrlDecode(encoded);
-                Report = JsonSerializer.Deserialize<Report>(json);
+                IsBusy = true;
+
+                if (query.ContainsKey("Report"))
+                {
+                    var encoded = query["Report"];
+                    var json = HttpUtility.UrlDecode(encoded);
+                    Report = JsonSerializer.Deserialize<Report>(json);
+                }
+
+                IsBusy = false;
             }
         }
 
@@ -130,7 +137,12 @@ namespace Mobile.ViewModels
 
         public void ExecuteUpdateTags(ReportDetailTagsViewModel model, IEnumerable<string> tags)
         {
-            Report.Tags = new ObservableCollection<string>(tags);
+            if (!IsBusy)
+            {
+                IsBusy = true;
+                Report.Tags = new ObservableCollection<string>(tags);
+                IsBusy = false;
+            }
         }
 
         #endregion

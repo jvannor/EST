@@ -17,6 +17,7 @@ namespace Mobile.ViewModels
 
         public LoadingViewModel(ISettingsService settings, IAuthenticationService authentication) : base(settings)
         {
+            Title = "Loading";
             authenticationService = authentication;
         }
 
@@ -24,18 +25,26 @@ namespace Mobile.ViewModels
         {
             try
             {
-                var authenticated = await authenticationService.Authenticated();
-                if (authenticated)
+                if (!IsBusy)
                 {
-                    await Shell.Current.GoToAsync("//Home");
-                }
-                else
-                {
-                    await Shell.Current.GoToAsync("//Login");
+                    IsBusy = true;
+
+                    var authenticated = await authenticationService.Authenticated();
+                    if (authenticated)
+                    {
+                        await Shell.Current.GoToAsync("//Home");
+                    }
+                    else
+                    {
+                        await Shell.Current.GoToAsync("//Login");
+                    }
+
+                    IsBusy = false;
                 }
             }
             catch(Exception ex)
             {
+                IsBusy = false;
                 Debug.WriteLine($"LoadingViewModel::ExecuteAppearingCommand() encountered an unexpected exception, {ex.GetType().Name}; {ex.Message}");
             }
         }

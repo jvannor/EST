@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Web;
 using Xamarin.Forms;
 using Mobile.ServiceContracts;
+using System.Diagnostics;
 
 namespace Mobile.ViewModels
 {
@@ -22,27 +23,13 @@ namespace Mobile.ViewModels
         public ObservableCollection<object> SelectedTags
         {
             get { return selectedTags; }
-            set
-            {
-                if (selectedTags != value)
-                {
-                    selectedTags = value;
-                    OnPropertyChanged();
-                }
-            }
+            set { SetProperty(ref selectedTags, value); }
         }
 
         public ObservableCollection<string> Tags
         {
             get { return tags; }
-            set
-            {
-                if (tags != value)
-                {
-                    tags = value;
-                    OnPropertyChanged();
-                }
-            }
+            set { SetProperty(ref tags, value); }
         }
 
         #endregion
@@ -62,28 +49,51 @@ namespace Mobile.ViewModels
 
         public async void Init()
         {
-            var doc = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
-            Tags = new ObservableCollection<string>(doc.Tags);
+            if (!IsBusy)
+            {
+                try
+                {
+                    IsBusy = true;
+                    var doc = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
+                    Tags = new ObservableCollection<string>(doc.Tags);
+                    IsBusy = false;
+                }
+                catch(Exception ex)
+                {
+                    IsBusy = false;
+                    Debug.WriteLine($"ReportDetailTagsViewModel::Init() encountered an exception; {ex.GetType().Name}; {ex.Message}");
+                }
+            }
         }
 
         public void ApplyQueryAttributes(IDictionary<string, string> query)
         {
-            if (query.ContainsKey("SelectedTags"))
+            if (!IsBusy)
             {
-                var encodedSelectedTags = query["SelectedTags"];
-                if (!string.IsNullOrEmpty(encodedSelectedTags))
+                IsBusy = true;
+                if (query.ContainsKey("SelectedTags"))
                 {
-                    var selectedTagsJson = HttpUtility.UrlDecode(encodedSelectedTags);
-                    var selectedTags = JsonSerializer.Deserialize<string[]>(selectedTagsJson);
-                    SelectedTags = new ObservableCollection<object>(selectedTags);
+                    var encodedSelectedTags = query["SelectedTags"];
+                    if (!string.IsNullOrEmpty(encodedSelectedTags))
+                    {
+                        var selectedTagsJson = HttpUtility.UrlDecode(encodedSelectedTags);
+                        var selectedTags = JsonSerializer.Deserialize<string[]>(selectedTagsJson);
+                        SelectedTags = new ObservableCollection<object>(selectedTags);
+                    }
                 }
+                IsBusy = false;
             }
         }
 
         public async void ExecuteSaveCommand(object parameter)
         {
-            MessagingCenter.Send(this, "UpdateTags", SelectedTags.Select(x => x as string));
-            await Shell.Current.GoToAsync($"..?");
+            if (!IsBusy)
+            {
+                IsBusy = true;
+                MessagingCenter.Send(this, "UpdateTags", SelectedTags.Select(x => x as string));
+                await Shell.Current.GoToAsync($"..?");
+                IsBusy = false;
+            }
         }
 
         #endregion

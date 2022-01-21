@@ -3,6 +3,7 @@
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:utilities="clr-namespace:Mobile.Utilities"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    IsBusy="{Binding IsBusy}"
     Title="{Binding Title}"
     utilities:ViewModelLocator.AutoWireViewModel="True"
     x:Class="Mobile.Views.TagDetailView">
@@ -20,8 +21,8 @@
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <StackLayout Margin="16,8,16,0">
-            <Label Text="Tag" FontSize="Small" />
-            <Entry Placeholder="Value" Text="{Binding Tag}"/>
+            <Label Text="Tag" FontSize="Small" TextColor="{StaticResource SecondaryText}"/>
+            <Entry Placeholder="Value" Text="{Binding Tag}" FontSize="Medium" TextColor="{StaticResource PrimaryText}"/>
             <BoxView HeightRequest="8"/>
         </StackLayout>
     </ContentPage.Content>

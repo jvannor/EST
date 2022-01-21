@@ -24,6 +24,5 @@ namespace Mobile.Services
         {
             return Preferences.Get(key, string.Empty);
         }
-
     }
 }

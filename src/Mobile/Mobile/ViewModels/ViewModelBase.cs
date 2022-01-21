@@ -10,7 +10,13 @@ namespace Mobile.ViewModels
 {
     internal class ViewModelBase : INotifyPropertyChanged
     {
+        #region Events
+
         public event PropertyChangedEventHandler PropertyChanged;
+
+        #endregion
+
+        #region Properties
 
         public bool IsBusy
         {
@@ -23,6 +29,10 @@ namespace Mobile.ViewModels
             get { return title; }
             set { SetProperty(ref title, value); }
         }
+
+        #endregion
+
+        #region Methods
 
         public ViewModelBase(ISettingsService settings)
         {
@@ -51,8 +61,14 @@ namespace Mobile.ViewModels
             changed.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        #endregion
+
+        #region Fields
+
         protected readonly ISettingsService settingsService;
         private bool isBusy = false;
         private string title = string.Empty;
+
+        #endregion
     }
 }

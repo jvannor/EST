@@ -9,6 +9,7 @@ using Mobile.Models;
 using Mobile.ServiceContracts;
 using System.Linq;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace Mobile.ViewModels
 {
@@ -54,41 +55,72 @@ namespace Mobile.ViewModels
 
         private async void Init()
         {
-            SettingsDocument = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
+            try
+            {
+                IsBusy = true;
+                SettingsDocument = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
+                IsBusy = false;
+            }
+            catch(Exception ex)
+            {
+                IsBusy = false;
+                Debug.WriteLine($"HomeViewModel::Init() encountered an exception; {ex.GetType().Name}; {ex.Message}");
+            }
         }
 
         public async void ExecuteNewReportCommand(object parameter)
         {
-            var template = parameter as ReportTemplate;
-            if (template != null)
+            if (!IsBusy)
             {
-                var timeStamp = DateTime.Now.ToLocalTime();
-                var report = new Report
-                {
-                    Id = string.Empty,
-                    ReportType = "Seizure Report",
-                    Author = settingsService.UserName,
-                    Subject = settingsService.UserName,
-                    Revision = 1,
-                    Created = timeStamp,
-                    Modified = timeStamp,
-                    Observed = timeStamp,
-                    Category = template.Content.Category,
-                    Subcategory = template.Content.Subcategory,
-                    Detail = template.Content.Detail,
-                    Description = string.Empty,
-                    Tags = new ObservableCollection<string>(template.Content.Tags)
-                };
+                IsBusy = true;
 
-                var reportJson = JsonSerializer.Serialize(report);
-                var encodedReport = HttpUtility.UrlEncode(reportJson);
-                await Shell.Current.GoToAsync($"ReportDetail?Report={encodedReport}");
+                var template = parameter as ReportTemplate;
+                if (template != null)
+                {
+                    var timeStamp = DateTime.Now.ToLocalTime();
+                    var report = new Report
+                    {
+                        Id = string.Empty,
+                        ReportType = "Seizure Report",
+                        Author = settingsService.UserName,
+                        Subject = settingsService.UserName,
+                        Revision = 1,
+                        Created = timeStamp,
+                        Modified = timeStamp,
+                        Observed = timeStamp,
+                        Category = template.Content.Category,
+                        Subcategory = template.Content.Subcategory,
+                        Detail = template.Content.Detail,
+                        Description = string.Empty,
+                        Tags = new ObservableCollection<string>(template.Content.Tags)
+                    };
+
+                    var reportJson = JsonSerializer.Serialize(report);
+                    var encodedReport = HttpUtility.UrlEncode(reportJson);
+                    await Shell.Current.GoToAsync($"ReportDetail?Report={encodedReport}");
+                }
+
+                IsBusy = false;
             }
         }
 
         public async void ExecuteRefreshCommand()
         {
-            SettingsDocument = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
+            try
+            {
+                if (!IsBusy)
+                {
+                    IsBusy = true;
+                    SettingsDocument = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
+                    IsBusy = false;
+                }
+            }
+            catch(Exception ex)
+            {
+                IsBusy = false;
+                Debug.WriteLine($"HomeViewModel::ExecuteRefreshCommand() encountered an exception; {ex.GetType().Name}; {ex.Message}");
+            }
+
             IsRefreshing = false;
         }
 

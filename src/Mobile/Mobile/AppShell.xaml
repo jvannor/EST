@@ -3,6 +3,16 @@
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:local="clr-namespace:Mobile.Views"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Shell.BackgroundColor="{StaticResource BackgroundColor}"
+    Shell.ForegroundColor="{StaticResource PrimaryColor}"
+    Shell.TitleColor="{StaticResource PrimaryText}"
+    Shell.TabBarBackgroundColor="{StaticResource PrimaryColor}"
+    Shell.TabBarTitleColor="{StaticResource TextIcons}"
+    Shell.TabBarUnselectedColor="{StaticResource TextIcons}"
+    Shell.DisabledColor="{StaticResource SecondaryText}"
+    Shell.TabBarDisabledColor="{StaticResource SecondaryText}"
+    Shell.TabBarForegroundColor="{StaticResource SecondaryText}"
+    Shell.UnselectedColor="{StaticResource SecondaryText}"
     x:Class="Mobile.AppShell">
 
     <ShellContent Route="Loading" ContentTemplate="{DataTemplate local:LoadingView}" />

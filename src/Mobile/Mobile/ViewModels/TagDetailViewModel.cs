@@ -10,28 +10,20 @@ namespace Mobile.ViewModels
 {
     internal class TagDetailViewModel : ViewModelBase, IQueryAttributable
     {
-        #region Properties
+        #region Commands
 
         public Command CancelCommand => new Command(ExecuteCancelCommand);
         public Command DeleteCommand => new Command(ExecuteDeleteCommand);
         public Command UpdateCommand => new Command(ExecuteUpdateCommand);
 
+        #endregion
+
+        #region Properties
 
         public string Tag
         {
-            get
-            {
-                return tag2;
-            }
-
-            set
-            {
-                if (tag2 != value)
-                {
-                    tag2 = value;
-                    OnPropertyChanged();
-                }
-            }
+            get { return tag2; }
+            set { SetProperty(ref tag2, value); }
         }
 
         #endregion
@@ -46,29 +38,49 @@ namespace Mobile.ViewModels
 
         public void ApplyQueryAttributes(IDictionary<string, string> query)
         {
-            var decoded = HttpUtility.UrlDecode(query["Tag"]);
-            tag1 = Tag = decoded;
+            if (!IsBusy)
+            {
+                IsBusy = true;
+                var decoded = HttpUtility.UrlDecode(query["Tag"]);
+                tag1 = Tag = decoded;
+                IsBusy = false;
+            }
         }
 
         private async void ExecuteCancelCommand()
         {
-            await Shell.Current.GoToAsync("..?");
+            if (!IsBusy)
+            {
+                IsBusy = true;
+                await Shell.Current.GoToAsync("..?");
+                IsBusy = false;
+            }
         }
 
         private async void ExecuteDeleteCommand()
         {
-            var confirm = await dialogService.InputBox("Confirmation", "Are you sure that you want to delete this item?", "Yes", "No");
-            if (confirm)
+            if (!IsBusy)
             {
-                MessagingCenter.Send(this, "DeleteTag", tag1);
-                await Shell.Current.GoToAsync("..?");
+                IsBusy = true;
+                var confirm = await dialogService.InputBox("Confirmation", "Are you sure that you want to delete this item?", "Yes", "No");
+                if (confirm)
+                {
+                    MessagingCenter.Send(this, "DeleteTag", tag1);
+                    await Shell.Current.GoToAsync("..?");
+                }
+                IsBusy = false;
             }
         }
 
         private async void ExecuteUpdateCommand()
         {
-            MessagingCenter.Send(this, "UpdateTag", (tag1, tag2));
-            await Shell.Current.GoToAsync("..?");
+            if (!IsBusy)
+            {
+                IsBusy = true;
+                MessagingCenter.Send(this, "UpdateTag", (tag1, tag2));
+                await Shell.Current.GoToAsync("..?");
+                IsBusy = false;
+            }
         }
 
         #endregion
