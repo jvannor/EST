@@ -72,12 +72,19 @@ namespace Mobile.Services
             {
                 var credentials = JsonSerializer.Deserialize<Credentials>(json);
                 var logoutResult = await client.LogoutAsync(new LogoutRequest { IdTokenHint = credentials.IdentityToken });
-                if (!logoutResult.IsError)
+                if (logoutResult.IsError)
                 {
-                    settingsService.UserName = string.Empty;
-                    SecureStorage.Remove("est.mobile.credentials");
-                    result = true;
+                    Debug.WriteLine("AuthenticationService::Logout() - logout returned false");
                 }
+
+                settingsService.UserName = string.Empty;
+                var storageResult = SecureStorage.Remove("est.mobile.credentials");
+                if (!storageResult)
+                {
+                    Debug.WriteLine("AuthenticationService::Logout() - secure storage returned false");
+                }
+
+                result = true;
             }
             return result;
         }
