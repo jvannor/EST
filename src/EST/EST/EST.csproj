@@ -18,6 +18,8 @@
     <PackageReference Include="IdentityModel.OidcClient" Version="5.0.0" />
     <PackageReference Include="akavache" Version="8.1.1" />
     <PackageReference Include="Xamarin.CommunityToolkit" Version="1.3.2" />
+    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.5.0" />
+    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Converters\" />
@@ -38,6 +40,8 @@
     <None Remove="ViewModels\" />
     <None Remove="Views\" />
     <None Remove="Xamarin.CommunityToolkit" />
+    <None Remove="Microsoft.AppCenter.Crashes" />
+    <None Remove="Microsoft.AppCenter.Analytics" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Converters\" />
