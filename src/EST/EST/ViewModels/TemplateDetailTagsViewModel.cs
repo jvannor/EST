@@ -50,20 +50,14 @@ namespace EST.ViewModels
 
         private async void Init()
         {
-            if (!IsBusy)
+            try
             {
-                try
-                {
-                    IsBusy = true;
-                    var doc = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
-                    Tags = doc.Tags;
-                    IsBusy = false;
-                }
-                catch(Exception ex)
-                {
-                    IsBusy = false;
-                    Debug.WriteLine($"TemplateDetailTagsViewModel::Init() encountered an exception; {ex.GetType().Name}; {ex.Message}");
-                }
+                var doc = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
+                Tags = doc.Tags;
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine($"TemplateDetailTagsViewModel::Init() encountered an exception; {ex.GetType().Name}; {ex.Message}");
             }
         }
 

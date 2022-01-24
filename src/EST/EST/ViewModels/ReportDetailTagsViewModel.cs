@@ -48,23 +48,18 @@ namespace EST.ViewModels
         }
 
         public async void Init()
-        {
-            if (!IsBusy)
+        {   
+            try
             {
-                try
-                {
-                    IsBusy = true;
-                    var doc = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
-                    Tags = new ObservableCollection<string>(doc.Tags);
-                    IsBusy = false;
-                }
-                catch(Exception ex)
-                {
-                    IsBusy = false;
-                    Debug.WriteLine($"ReportDetailTagsViewModel::Init() encountered an exception; {ex.GetType().Name}; {ex.Message}");
-                }
+                var doc = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
+                Tags = new ObservableCollection<string>(doc.Tags);
             }
-        }
+            catch(Exception ex)
+            {
+
+                Debug.WriteLine($"ReportDetailTagsViewModel::Init() encountered an exception; {ex.GetType().Name}; {ex.Message}");
+            }
+        }   
 
         public void ApplyQueryAttributes(IDictionary<string, string> query)
         {
