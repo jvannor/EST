@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:utilities="clr-namespace:EST.Utilities"
+    xmlns:vm="clr-namespace:EST.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    IsBusy="{Binding IsBusy}"
+    Title="{Binding Title}"
+    utilities:ViewModelLocator.AutoWireViewModel="True"
+    x:Class="EST.Views.HomeView">
+    <ContentPage.Content>
+        <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}" Margin="16,8,16,0">
+            <CollectionView ItemsSource="{Binding SettingsDocument.Templates}" VerticalScrollBarVisibility="Never">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="16"/>
+                </CollectionView.ItemsLayout>
+                <CollectionView.Header>
+                    <StackLayout x:Name="Header">
+                        <Image HorizontalOptions="Center" VerticalOptions="Center">
+                            <Image.Source>
+                                <FontImageSource x:Name="HeaderImage" Color="{StaticResource PrimaryColor}" FontFamily="FontAwesomeSolid" Size="Title" Glyph="Notes-Medical"/>
+                            </Image.Source>
+                        </Image>
+                    </StackLayout>
+                </CollectionView.Header>
+                <CollectionView.EmptyViewTemplate>
+                    <DataTemplate>
+                        <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
+                            <Label Text="Welcome!" FontSize="Medium" TextColor="{StaticResource PrimaryText}"/>
+                            <Label Text="No report templates available." FontSize="Small" TextColor="{StaticResource SecondaryText}" LineBreakMode="WordWrap"/>
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.EmptyViewTemplate>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BorderColor="{StaticResource DarkPrimaryColor}" HasShadow="False" Padding="8,4,8,4">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HomeViewModel}}, Path=NewReportCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </Frame.GestureRecognizers>
+                            <Label Text="{Binding Title, StringFormat='New {0}'}" HorizontalOptions="Center" FontSize="Medium" TextColor="{StaticResource PrimaryText}"/>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </ContentPage.Content>
+</ContentPage>

@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:utilities="clr-namespace:EST.Utilities"
+    xmlns:vm="clr-namespace:EST.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    IsBusy="{Binding IsBusy}"
+    Title="{Binding Title}"
+    utilities:ViewModelLocator.AutoWireViewModel="True"
+    x:Class="EST.Views.TemplatesView">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="New" Command="{Binding NewCommand}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource FontFamily="FontAwesomeSolid" Size="Large" Glyph="Plus"/>
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+    </ContentPage.ToolbarItems>
+    <ContentPage.Content>
+        <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}" Margin="16,8,16,0">
+            <CollectionView
+                ItemsSource="{Binding SettingsDocument.Templates}">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="8"/>
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout>
+                            <StackLayout.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:TemplatesViewModel}}, Path=EditCommand}" CommandParameter="{Binding .}" />
+                            </StackLayout.GestureRecognizers>
+                            <Label Text="{Binding Title}" FontSize="Medium" TextColor="{StaticResource PrimaryText}"/>
+                            <BoxView HeightRequest="1" Color="{StaticResource DividerColor}"/>
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </ContentPage.Content>
+</ContentPage>
