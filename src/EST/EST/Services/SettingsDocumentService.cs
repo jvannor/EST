@@ -40,7 +40,7 @@ namespace EST.Services
                     var body = await response.Content.ReadAsStringAsync();
                     var document = JsonSerializer.Deserialize<SettingsDocument>(body, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
 
-                    Cache.InsertObject(Constants.SettingsDocument, document, DateTime.Now.AddMinutes(5));
+                    Cache.InsertObject(Constants.SettingsDocument, document, DateTime.Now.AddDays(1));
                     return document;
                 }
                 else
@@ -67,7 +67,7 @@ namespace EST.Services
             if (response.IsSuccessStatusCode)
             {
                 Cache.InvalidateObject<SettingsDocument>(Constants.SettingsDocument);
-                Cache.InsertObject(Constants.SettingsDocument, document, DateTime.Now.AddMinutes(5));
+                Cache.InsertObject(Constants.SettingsDocument, document, DateTime.Now.AddDays(1));
 
                 return;
             }
