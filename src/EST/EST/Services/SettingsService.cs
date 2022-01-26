@@ -7,7 +7,7 @@ using EST.ServiceContracts;
 
 namespace EST.Services
 {
-    internal class SettingsService : ISettingsService
+    public sealed class SettingsService : ISettingsService
     {
         public string UserName
         {

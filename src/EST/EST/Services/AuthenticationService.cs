@@ -12,7 +12,7 @@ using EST.Utilities;
 
 namespace EST.Services
 {
-    internal class AuthenticationService : IAuthenticationService
+    public sealed class AuthenticationService : IAuthenticationService
     {
         public AuthenticationService(ISettingsService settings)
         {

@@ -9,18 +9,8 @@ using EST.ServiceContracts;
 
 namespace EST.ViewModels
 {
-    internal class TemplateDetailViewModel : ViewModelBase, IQueryAttributable
+    public sealed class TemplateDetailViewModel : ViewModelBase, IQueryAttributable
     {
-        #region Commands
-
-        public Command GoToTagsCommand => new Command(ExecuteGoToTagsCommand);
-
-        public Command SaveCommand => new Command(ExecuteSaveCommand);
-
-        public Command DeleteCommand => new Command(ExecuteDeleteCommand);
-
-        #endregion
-
         #region Properties
 
         public ReportTemplate ReportTemplate
@@ -45,71 +35,56 @@ namespace EST.ViewModels
 
         public void ApplyQueryAttributes(IDictionary<string, string> query)
         {
-            if (!IsBusy)
+            if (query.ContainsKey("Template"))
             {
-                IsBusy = true;
-                if (query.ContainsKey("Template"))
+                if (!string.IsNullOrEmpty(query["Template"]))
                 {
-                    if (!string.IsNullOrEmpty(query["Template"]))
-                    {
-                        var decoded = HttpUtility.UrlDecode(query["Template"]);
-                        ReportTemplate = JsonSerializer.Deserialize<ReportTemplate>(decoded);
-                    }
-                    else
-                    {
-                        ReportTemplate = new ReportTemplate();
-                    }
+                    var decoded = HttpUtility.UrlDecode(query["Template"]);
+                    ReportTemplate = JsonSerializer.Deserialize<ReportTemplate>(decoded);
                 }
-                IsBusy = false;
+                else
+                {
+                    ReportTemplate = new ReportTemplate();
+                }
             }
         }
 
-        public async void ExecuteGoToTagsCommand(object parameter)
-        {
-            if (!IsBusy)
-            {
-                IsBusy = true;
-                var json = JsonSerializer.Serialize(ReportTemplate.Content.Tags);
-                var encoded = HttpUtility.UrlEncode(json);
-                await Shell.Current.GoToAsync($"TemplateDetailTags?SelectedTags={encoded}");
-                IsBusy = false;
-            }
-        }
+        #endregion
+
+        #region Commands
+
+        public Command DeleteCommand => new Command(ExecuteDeleteCommand);
 
         public async void ExecuteDeleteCommand(object parameter)
         {
-            if (!IsBusy)
+            var confirm = await dialogService.InputBox("Confirmation", "Are you sure that you want to delete this item?", "Yes", "no");
+            if (confirm)
             {
-                IsBusy = true;
-                var confirm = await dialogService.InputBox("Confirmation", "Are you sure that you want to delete this item?", "Yes", "no");
-                if (confirm)
-                {
-                    MessagingCenter.Send(this, "DeleteReportTemplate", ReportTemplate);
-                    await Shell.Current.GoToAsync("..?");
-                }
-                IsBusy = false;
+                MessagingCenter.Send(this, "DeleteReportTemplate", ReportTemplate);
+                await Shell.Current.GoToAsync("..?");
             }
         }
 
+        public Command GoToTagsCommand => new Command(ExecuteGoToTagsCommand);
+
+        public async void ExecuteGoToTagsCommand(object parameter)
+        {
+            var json = JsonSerializer.Serialize(ReportTemplate.Content.Tags);
+            var encoded = HttpUtility.UrlEncode(json);
+            await Shell.Current.GoToAsync($"TemplateDetailTags?SelectedTags={encoded}");
+        }
+
+        public Command SaveCommand => new Command(ExecuteSaveCommand);
+
         public async void ExecuteSaveCommand(object parameter)
         {
-            if (!IsBusy)
-            {
-                IsBusy = true;
-                MessagingCenter.Send(this, "SaveReportTemplate", ReportTemplate);
-                await Shell.Current.GoToAsync("..?");
-                IsBusy = false;
-            }
+            MessagingCenter.Send(this, "SaveReportTemplate", ReportTemplate);
+            await Shell.Current.GoToAsync("..?");
         }
 
         public void ExecuteUpdateTags(TemplateDetailTagsViewModel model, IEnumerable<string> tags)
         {
-            if (!IsBusy)
-            {
-                IsBusy = true;
-                ReportTemplate.Content.Tags = new ObservableCollection<string>(tags);
-                IsBusy = false;
-            }
+             ReportTemplate.Content.Tags = new ObservableCollection<string>(tags);
         }
 
         #endregion

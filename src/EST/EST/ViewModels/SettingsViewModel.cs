@@ -5,14 +5,8 @@ using EST.ServiceContracts;
 
 namespace EST.ViewModels
 {
-    internal class SettingsViewModel :ViewModelBase
+    public sealed class SettingsViewModel :ViewModelBase
     {
-        #region Commands
-
-        public Command LogoutCommand => new Command(ExecuteLogoutCommand);
-
-        #endregion
-
         #region Properties
 
         public string UserName
@@ -33,23 +27,21 @@ namespace EST.ViewModels
             this.authenticationService = authenticationService;
         }
 
+        #endregion
+
+        #region Commands
+
+        public Command LogoutCommand => new Command(ExecuteLogoutCommand);
+
         public async void ExecuteLogoutCommand()
         {
             try
             {
-                if (!IsBusy)
-                {
-                    IsBusy = true;
-
-                    await authenticationService.Logout();
-                    await Shell.Current.GoToAsync("//Login");
-
-                    IsBusy = false;
-                }
+                await authenticationService.Logout();
+                await Shell.Current.GoToAsync("//Login");
             }
             catch (Exception ex)
             {
-                IsBusy = false;
                 Debug.WriteLine($"SettingsViewModel::ExecuteLogoutCommand() encountered an exception; {ex.GetType().Name}; {ex.Message}");
             }
         }

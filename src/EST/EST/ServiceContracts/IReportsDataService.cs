@@ -5,7 +5,7 @@ using EST.Models;
 
 namespace EST.ServiceContracts
 {
-    internal interface IReportsDataService
+    public interface IReportsDataService
     {
         Task<Report> GetReport(string id);
 

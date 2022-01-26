@@ -5,14 +5,8 @@ using EST.ServiceContracts;
 
 namespace EST.ViewModels
 {
-    internal class LoadingViewModel : ViewModelBase
+    public sealed class LoadingViewModel : ViewModelBase
     {
-        #region Commands
-
-        public Command AppearingCommand => new Command(ExecuteAppearingCommand);
-
-        #endregion
-
         #region Methods
 
         public LoadingViewModel(ISettingsService settings, IAuthenticationService authentication) : base(settings)
@@ -21,32 +15,35 @@ namespace EST.ViewModels
             authenticationService = authentication;
         }
 
+        #endregion
+
+        #region Commands
+
+        public Command AppearingCommand => new Command(ExecuteAppearingCommand);
+
         public async void ExecuteAppearingCommand()
         {
+            IsBusy = true;
+
             try
             {
-                if (!IsBusy)
+                var authenticated = await authenticationService.Authenticated();
+                if (authenticated)
                 {
-                    IsBusy = true;
-
-                    var authenticated = await authenticationService.Authenticated();
-                    if (authenticated)
-                    {
-                        await Shell.Current.GoToAsync("//Home");
-                    }
-                    else
-                    {
-                        await Shell.Current.GoToAsync("//Login");
-                    }
-
-                    IsBusy = false;
+                    await Shell.Current.GoToAsync("//Home");
+                }
+                else
+                {
+                    await Shell.Current.GoToAsync("//Login");
                 }
             }
             catch(Exception ex)
             {
-                IsBusy = false;
                 Debug.WriteLine($"LoadingViewModel::ExecuteAppearingCommand() encountered an unexpected exception, {ex.GetType().Name}; {ex.Message}");
+                throw ex;
             }
+
+            IsBusy = false;
         }
 
         #endregion

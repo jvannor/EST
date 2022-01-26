@@ -5,7 +5,7 @@ using EST.ServiceContracts;
 
 namespace EST.Services
 {
-    internal class DialogService : IDialogService
+    public sealed class DialogService : IDialogService
     {
         #region Methods
 

@@ -6,7 +6,7 @@ using EST.Utilities;
 
 namespace EST.ServiceContracts
 {
-    internal interface IAuthenticationService
+    public interface IAuthenticationService
     {
         Task<bool> Authenticated();
 

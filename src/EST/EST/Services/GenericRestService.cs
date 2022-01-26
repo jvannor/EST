@@ -7,7 +7,7 @@ using EST.ServiceContracts;
 
 namespace EST.Services
 {
-    internal class GenericRestService : IGenericRestService
+    public sealed class GenericRestService : IGenericRestService
     {
         public async Task<T> Get<T>(string uri, string authToken = "")
         {

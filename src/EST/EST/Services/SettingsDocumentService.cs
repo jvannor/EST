@@ -11,7 +11,7 @@ using EST.Utilities;
 
 namespace EST.Services
 {
-    internal class SettingsDocumentService : ServiceBase, ISettingsDocumentService
+    public sealed class SettingsDocumentService : ServiceBase, ISettingsDocumentService
     {
         public SettingsDocumentService(IAuthenticationService authn, IBlobCache cache = null) : base(cache)
         {

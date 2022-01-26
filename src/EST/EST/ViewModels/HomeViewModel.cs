@@ -13,16 +13,8 @@ using System.Linq;
 
 namespace EST.ViewModels
 {
-    internal class HomeViewModel : ViewModelBase
-    {
-        #region Commands
-
-        public Command RefreshCommand => new Command(ExecuteRefreshCommand);
-
-        public Command NewReportCommand => new Command(ExecuteNewReportCommand);
-
-        #endregion
-
+    public sealed class HomeViewModel : ViewModelBase
+    { 
         #region Properties
 
         public bool IsRefreshing
@@ -49,79 +41,86 @@ namespace EST.ViewModels
             Title = "Epileptic Seizure Tracker";
             this.settingsDocumentService = settingsDocumentService;
             this.reportDataService = reportDataService;
-
-            Init();
         }
 
-        private async void Init()
+        #endregion
+
+        #region Commands
+
+        public Command AppearingCommand => new Command(ExecuteAppearingCommand);
+
+        public async void ExecuteAppearingCommand()
         {
+            IsBusy = true;
+
             try
             {
-                IsBusy = true;
-                SettingsDocument = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
-                IsBusy = false;
+                if (SettingsDocument == null)
+                {
+                    SettingsDocument = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
+                }
             }
             catch(Exception ex)
             {
-                IsBusy = false;
-                Debug.WriteLine($"HomeViewModel::Init() encountered an exception; {ex.GetType().Name}; {ex.Message}");
+                Debug.WriteLine($"HomeViewModel::ExecuteAppearingCommand() encountered an exception; {ex.GetType().Name}; {ex.Message}");
             }
+
+            IsBusy = false;
         }
+
+        public Command NewReportCommand => new Command(ExecuteNewReportCommand);
 
         public async void ExecuteNewReportCommand(object parameter)
         {
-            if (!IsBusy)
+            var template = parameter as ReportTemplate;
+            if (template != null)
             {
-                IsBusy = true;
-
-                var template = parameter as ReportTemplate;
-                if (template != null)
+                var timeStamp = DateTime.Now.ToLocalTime();
+                var report = new Report
                 {
-                    var timeStamp = DateTime.Now.ToLocalTime();
-                    var report = new Report
-                    {
-                        Id = string.Empty,
-                        ReportType = "Seizure Report",
-                        Author = settingsService.UserName,
-                        Subject = settingsService.UserName,
-                        Revision = 1,
-                        Created = timeStamp,
-                        Modified = timeStamp,
-                        Observed = timeStamp,
-                        Category = template.Content.Category,
-                        Subcategory = template.Content.Subcategory,
-                        Detail = template.Content.Detail,
-                        Description = string.Empty,
-                        Tags = new ObservableCollection<string>(template.Content.Tags)
-                    };
+                    Id = string.Empty,
+                    ReportType = "Seizure Report",
+                    Author = settingsService.UserName,
+                    Subject = settingsService.UserName,
+                    Revision = 1,
+                    Created = timeStamp,
+                    Modified = timeStamp,
+                    Observed = timeStamp,
+                    Category = template.Content.Category,
+                    Subcategory = template.Content.Subcategory,
+                    Detail = template.Content.Detail,
+                    Description = string.Empty,
+                    Tags = new ObservableCollection<string>(template.Content.Tags)
+                };
 
-                    var reportJson = JsonSerializer.Serialize(report);
-                    var encodedReport = HttpUtility.UrlEncode(reportJson);
-                    await Shell.Current.GoToAsync($"ReportDetail?Report={encodedReport}");
-                }
-
-                IsBusy = false;
+                var reportJson = JsonSerializer.Serialize(report);
+                var encodedReport = HttpUtility.UrlEncode(reportJson);
+                await Shell.Current.GoToAsync($"ReportDetail?Report={encodedReport}");
             }
         }
 
+        public Command RefreshCommand => new Command(ExecuteRefreshCommand);
+
         public async void ExecuteRefreshCommand()
         {
+            if (IsBusy)
+            {
+                return;
+            }
+
+            IsBusy = true;
+
             try
             {
-                if (!IsBusy)
-                {
-                    IsBusy = true;
-                    SettingsDocument = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
-                    IsBusy = false;
-                }
+                SettingsDocument = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
             }
             catch(Exception ex)
             {
-                IsBusy = false;
                 Debug.WriteLine($"HomeViewModel::ExecuteRefreshCommand() encountered an exception; {ex.GetType().Name}; {ex.Message}");
             }
 
             IsRefreshing = false;
+            IsBusy = false;
         }
 
         #endregion

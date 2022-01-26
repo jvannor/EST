@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Web;
 using Xamarin.Forms;
 using EST.Models;
@@ -12,20 +13,8 @@ using EST.Utilities;
 
 namespace EST.ViewModels
 {
-    internal class ReportsViewModel : ViewModelBase
+    public sealed class ReportsViewModel : ViewModelBase
     {
-        #region Commands
-
-        public Command GoToDetailsCommand => new Command(ExecuteGoToDetailsCommand);
-
-        public Command LoadReportsCommand => new Command(ExecuteLoadReportsCommand);
-
-        public Command RefreshReportsCommand => new Command(ExecuteRefreshReportsCommand);
-
-        public Command ReportThresholdReachedCommand => new Command(ExecuteReportThresholdReachedCommand);
-
-        #endregion
-
         #region Properties
 
         public bool IsRefreshing
@@ -57,20 +46,21 @@ namespace EST.ViewModels
             Title = "Reports";
             Reports = new ObservableCollection<Report>();
             ReportThreshold = 1;
+
             this.reportsDataService = reportsDataService;
 
             MessagingCenter.Subscribe<ReportDetailViewModel, Report>(this, "CreateReport", ExecuteCreateReport);
             MessagingCenter.Subscribe<ReportDetailViewModel, Report>(this, "UpdateReport", ExecuteUpdateReport);
             MessagingCenter.Subscribe<ReportDetailViewModel, string>(this, "DeleteReport", ExecuteDeleteReport);
-
-            Init();
         }
 
-        public async void Init()
+        private async Task ExecuteLoadReportsCommand()
         {
             try
             {
-                IsBusy = true;
+                Reports.Clear();
+                ReportThreshold = 1;
+
                 var reports = await reportsDataService.GetReports(settingsService.UserName, 0, 10);
                 foreach (var report in reports)
                 {
@@ -81,70 +71,125 @@ namespace EST.ViewModels
                     Reports.Add(report);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Debug.WriteLine($"ReportsViewModel::Init() encountered an exception; {ex.GetType().Name}; {ex.Message}");
-            }
-            finally
-            {
-                IsBusy = false;
+                Debug.WriteLine($"ReportsViewModel::ExecuteLoadReportsCommand() encountered an exception; {ex.GetType().Name}; {ex.Message}");
+                throw ex;
             }
         }
 
         public async void ExecuteCreateReport(ReportDetailViewModel model, Report report)
         {
-            if (!IsBusy)
-            {
-                IsBusy = true;
-                var temp = Reports.Union<Report>(new[] { report })
-                    .GroupBy(r => r.Id)
-                    .Select(group => group.FirstOrDefault())
-                    .OrderByDescending(r => r.Observed);
+            var temp = Reports.Union<Report>(new[] { report })
+                .GroupBy(r => r.Id)
+                .Select(group => group.FirstOrDefault())
+                .OrderByDescending(r => r.Observed);
 
-                Reports = new ObservableCollection<Report>(temp);
-                IsBusy = false;
-            }
+            Reports = new ObservableCollection<Report>(temp);
         }
 
         public async void ExecuteDeleteReport(ReportDetailViewModel model, string parameter)
         {
-            if (!IsBusy)
-            {
-                IsBusy = true;
-                Reports.Remove(Reports.FirstOrDefault(target => target.Id == parameter));
-                IsBusy = false;
-            }
+            Reports.Remove(Reports.FirstOrDefault(target => target.Id == parameter));
         }
 
-        public async void ExecuteGoToDetailsCommand(object parameter)
+        public async void ExecuteUpdateReport(ReportDetailViewModel mode, Report report)
         {
-            if (!IsBusy)
+            try
             {
-                IsBusy = true;
+                var target = Reports.Where(r => r.Id == report.Id).FirstOrDefault();
 
-                var report = parameter as Report;
-                if (report != null)
+                if (target != null)
                 {
-                    var reportJson = JsonSerializer.Serialize(report);
-                    var reportString = HttpUtility.UrlEncode(reportJson);
-                    await Shell.Current.GoToAsync($"ReportDetail?Report={reportString}");
+                    var created = report.Created;
+                    report.Created = created.ToUniversalTime();
+
+                    var modified = report.Modified;
+                    report.Modified = modified.ToUniversalTime();
+
+                    var observed = report.Observed;
+                    report.Observed = report.Observed.ToUniversalTime();
+
+                    await reportsDataService.UpdateReport(report);
+
+                    target.Created = created;
+                    target.Modified = modified;
+                    target.Observed = observed;
+                    target.Category = report.Category;
+                    target.Subcategory = report.Subcategory;
+                    target.Detail = report.Detail;
+                    target.Description = report.Description;
+                    target.Tags = new ObservableCollection<string>(report.Tags);
                 }
-
-                IsBusy = false;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ReportsViewModel::ExecuteUpdateReport() encountered an exception; {ex.GetType().Name}; {ex.Message}");
             }
         }
 
-        public async void ExecuteLoadReportsCommand()
-        {
-            if (!IsBusy)
-            {
-                try
-                {
-                    IsBusy = true;
-                    ReportThreshold = 1;
-                    Reports.Clear();
+        #endregion
 
-                    var reports = await reportsDataService.GetReports(settingsService.UserName, 0, 10);
+        #region Commands
+
+        public Command AppearingCommand => new Command(ExecuteAppearingCommand);
+
+        public async void ExecuteAppearingCommand()
+        {
+            IsBusy = true;
+
+            if (Reports.Count == 0)
+            {
+                await ExecuteLoadReportsCommand();
+            }
+
+            IsBusy = false;
+        }
+
+        public Command RefreshReportsCommand => new Command(ExecuteRefreshReportsCommand);
+
+        public async void ExecuteRefreshReportsCommand()
+        {
+            if (IsBusy)
+            {
+                return;
+            }
+
+            IsBusy = true;
+
+            try
+            { 
+                await ExecuteLoadReportsCommand();
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine($"ReportsViewModel::ExecuteRefreshReportsCommand() encountered an exception; {ex.GetType().Name}; {ex.Message}");
+            }
+
+            IsRefreshing = false;
+            IsBusy = false;
+        }
+
+        public Command ReportThresholdReachedCommand => new Command(ExecuteReportThresholdReachedCommand);
+
+        public async void ExecuteReportThresholdReachedCommand()
+        {
+            if (IsBusy)
+            {
+                return;
+            }
+
+            IsBusy = true;
+
+            try
+            {
+                var reports = await reportsDataService.GetReports(settingsService.UserName, Reports.Count / 10, 10);
+                if ((reports.Count() == 0) || (reports.Last().Id == Reports.Last().Id))
+                {
+                    ReportThreshold = -1;
+                }
+                else
+                {
                     foreach (var report in reports)
                     {
                         report.Created = report.Created.ToLocalTime();
@@ -153,102 +198,26 @@ namespace EST.ViewModels
 
                         Reports.Add(report);
                     }
-
-                    IsBusy = false;
-                }
-                catch (Exception ex)
-                {
-                    IsBusy = false;
-                    Debug.WriteLine($"ReportsViewModel::ExecuteLoadReportsCommand() encountered an exception; {ex.GetType().Name}; {ex.Message}");
                 }
             }
-        }
-
-        public async void ExecuteRefreshReportsCommand()
-        {
-            if (!IsBusy)
+            catch (Exception ex)
             {
-                IsBusy = true;
-                ExecuteLoadReportsCommand();
-                IsRefreshing = false;
-                IsBusy = false;
+                Debug.WriteLine($"ReportsViewModel::ExecuteReportThresholdReachedCommand() encountered an exception; {ex.GetType().Name}; {ex.Message}");
             }
+
+            IsBusy = false;
         }
 
-        public async void ExecuteReportThresholdReachedCommand()
+        public Command ReportDetailCommand => new Command(ExecuteReportDetailCommand);
+
+        public async void ExecuteReportDetailCommand(object parameter)
         {
-            if (!IsBusy)
+            var report = parameter as Report;
+            if (report != null)
             {
-                try
-                {
-                    IsBusy = true;
-
-                    var reports = await reportsDataService.GetReports(settingsService.UserName, Reports.Count / 10, 10);
-                    if ((reports.Count() == 0) || (reports.Last().Id == Reports.Last().Id))
-                    {
-                        ReportThreshold = -1;
-                    }
-                    else
-                    {
-                        foreach (var report in reports)
-                        {
-                            report.Created = report.Created.ToLocalTime();
-                            report.Modified = report.Modified.ToLocalTime();
-                            report.Observed = report.Observed.ToLocalTime();
-
-                            Reports.Add(report);
-                        }
-                    }
-
-                    IsBusy = false;
-                }
-                catch (Exception ex)
-                {
-                    IsBusy = false;
-                    Debug.WriteLine($"ReportsViewModel::ExecuteReportThresholdReachedCommand() encountered an exception; {ex.GetType().Name}; {ex.Message}");
-                }
-            }
-        }
-
-        public async void ExecuteUpdateReport(ReportDetailViewModel mode, Report report)
-        {
-            if (!IsBusy)
-            {
-                try
-                {
-                    IsBusy = true;
-
-                    var target = Reports.Where(r => r.Id == report.Id).FirstOrDefault();
-                    if (target != null)
-                    {
-                        var created = report.Created;
-                        report.Created = created.ToUniversalTime();
-
-                        var modified = report.Modified;
-                        report.Modified = modified.ToUniversalTime();
-
-                        var observed = report.Observed;
-                        report.Observed = report.Observed.ToUniversalTime();
-
-                        await reportsDataService.UpdateReport(report);
-
-                        target.Created = created;
-                        target.Modified = modified;
-                        target.Observed = observed;
-                        target.Category = report.Category;
-                        target.Subcategory = report.Subcategory;
-                        target.Detail = report.Detail;
-                        target.Description = report.Description;
-                        target.Tags = new ObservableCollection<string>(report.Tags);
-                    }
-
-                    IsBusy = false;
-                }
-                catch (Exception ex)
-                {
-                    IsBusy = false;
-                    Debug.WriteLine($"ReportsViewModel::ExecuteUpdateReport() encountered an exception; {ex.GetType().Name}; {ex.Message}");
-                }
+                var reportJson = JsonSerializer.Serialize(report);
+                var reportString = HttpUtility.UrlEncode(reportJson);
+                await Shell.Current.GoToAsync($"ReportDetail?Report={reportString}");
             }
         }
 
