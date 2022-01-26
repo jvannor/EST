@@ -7,7 +7,7 @@ using EST.Utilities;
 
 namespace EST.Services
 {
-    internal class ReportsDataService : IReportsDataService
+    public sealed class ReportsDataService : IReportsDataService
     {
         public ReportsDataService(IAuthenticationService authentication, IGenericRestService service)
         {

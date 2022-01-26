@@ -7,21 +7,12 @@ using System.Web;
 using Xamarin.Forms;
 using EST.Models;
 using EST.ServiceContracts;
+using System.Threading.Tasks;
 
 namespace EST.ViewModels
 {
-    internal class TagsViewModel : ViewModelBase
+    public sealed class TagsViewModel : ViewModelBase
     {
-        #region Commands
-
-        public Command EditCommand => new Command(ExecuteEditCommand);
-
-        public Command NewCommand => new Command(ExecuteNewCommand);
-
-        public Command RefreshCommand => new Command(ExecuteRefreshCommand);
-
-        #endregion
-
         #region Properties
 
         public bool IsRefreshing
@@ -50,119 +41,109 @@ namespace EST.ViewModels
 
             MessagingCenter.Subscribe<TagDetailViewModel, string>(this, "DeleteTag", ExecuteDeleteTag);
             MessagingCenter.Subscribe<TagDetailViewModel, (string, string)>(this, "UpdateTag", ExecuteUpdateTag);
-
-            Init();
-        }
-
-        private async void Init()
-        {
-            try
-            {
-                IsBusy = true;
-                SettingsDocument = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
-            }
-            catch(Exception ex)
-            {
-                Debug.WriteLine($"TagsViewModel::Init() encountered an exception; {ex.GetType().Name}; {ex.Message}");
-            }
-            finally
-            {
-                IsBusy = false;
-            }
         }
 
         public async void ExecuteDeleteTag(TagDetailViewModel model, string tag)
         {
-            if (!IsBusy)
+            try
             {
-                try
+                var target = SettingsDocument.Tags.Where(t => t == tag).FirstOrDefault();
+                if (target != null)
                 {
-                    IsBusy = true;
-                    var target = SettingsDocument.Tags.Where(t => t == tag).FirstOrDefault();
-                    if (target != null)
-                    {
-                        SettingsDocument.Tags.Remove(tag);
-                        await settingsDocumentService.UpdateSettingsDocument(SettingsDocument);
-                    }
-                    IsBusy = false;
-                }
-                catch (Exception ex)
-                {
-                    IsBusy = false;
-                    Debug.WriteLine($"TagsViewModel::ExecuteDeleteTag() encountered an exception; {ex.GetType().Name}; {ex.Message}");
+                    SettingsDocument.Tags.Remove(tag);
+                    await settingsDocumentService.UpdateSettingsDocument(SettingsDocument);
                 }
             }
-        }
-
-        public async void ExecuteEditCommand(object parameter)
-        {
-            if (!IsBusy)
+            catch (Exception ex)
             {
-                IsBusy = true;
-                var encoded = HttpUtility.UrlEncode((string)parameter);
-                await Shell.Current.GoToAsync($"TagDetails?Tag={encoded}");
-                IsBusy = false;
-            }
-        }
-
-        public async void ExecuteNewCommand()
-        {
-            if (!IsBusy)
-            {
-                IsBusy = true;
-                await Shell.Current.GoToAsync("TagDetails?Tag=");
-                IsBusy = false;
-            }
-        }
-
-        public async void ExecuteRefreshCommand()
-        {
-            if (!IsBusy)
-            {
-                try
-                {
-                    IsBusy = true;
-                    SettingsDocument = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
-                    IsBusy = false;
-                }
-                catch(Exception ex)
-                {
-                    IsBusy = false;
-                    Debug.WriteLine($"TagsViewModel::ExecuteRefreshCommand() encountered an exception; {ex.GetType().Name}; {ex.Message}");
-                }
-
-                IsRefreshing = false;
+                Debug.WriteLine($"TagsViewModel::ExecuteDeleteTag() encountered an exception; {ex.GetType().Name}; {ex.Message}");
             }
         }
 
         public async void ExecuteUpdateTag(TagDetailViewModel model, (string, string) tag)
         {
-            if (!IsBusy)
+            try
             {
-                try
+                if (string.IsNullOrEmpty(tag.Item1) && (!string.IsNullOrEmpty(tag.Item2)))
                 {
-                    IsBusy = true;
-
-                    if (string.IsNullOrEmpty(tag.Item1) && (!string.IsNullOrEmpty(tag.Item2)))
-                    {
-                        SettingsDocument.Tags.Add(tag.Item2);
-                        await settingsDocumentService.UpdateSettingsDocument(SettingsDocument);
-                    }
-                    else if (SettingsDocument.Tags.Contains(tag.Item1))
-                    {
-                        var i = SettingsDocument.Tags.IndexOf(tag.Item1);
-                        SettingsDocument.Tags[i] = tag.Item2;
-                        await settingsDocumentService.UpdateSettingsDocument(SettingsDocument);
-                    }
-
-                    IsBusy = false;
+                    SettingsDocument.Tags.Add(tag.Item2);
+                    await settingsDocumentService.UpdateSettingsDocument(SettingsDocument);
                 }
-                catch (Exception ex)
+                else if (SettingsDocument.Tags.Contains(tag.Item1))
                 {
-                    IsBusy = false;
-                    Debug.WriteLine($"TagsViewModel::ExecuteUpdateTag() encountered an exception; {ex.GetType().Name}; {ex.Message}");
+                    var i = SettingsDocument.Tags.IndexOf(tag.Item1);
+                    SettingsDocument.Tags[i] = tag.Item2;
+                    await settingsDocumentService.UpdateSettingsDocument(SettingsDocument);
                 }
             }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"TagsViewModel::ExecuteUpdateTag() encountered an exception; {ex.GetType().Name}; {ex.Message}");
+            }
+        }
+
+        #endregion
+
+        #region Commands
+
+        public Command AppearingCommand => new Command(ExecuteAppearingCommand);
+
+        public async void ExecuteAppearingCommand()
+        {
+            IsBusy = true;
+
+            try
+            {
+                if (SettingsDocument == null)
+                {
+                    SettingsDocument = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
+                }
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine($"TagsViewModel::ExecuteAppearingCommand() encountered an exception; {ex.GetType().Name}; {ex.Message}");
+            }
+
+            IsBusy = false;
+        }
+
+        public Command EditCommand => new Command(ExecuteEditCommand);
+
+        public async void ExecuteEditCommand(object parameter)
+        {
+            var encoded = HttpUtility.UrlEncode((string)parameter);
+            await Shell.Current.GoToAsync($"TagDetails?Tag={encoded}");
+        }
+
+        public Command NewCommand => new Command(ExecuteNewCommand);
+
+        public async void ExecuteNewCommand()
+        {
+            await Shell.Current.GoToAsync("TagDetails?Tag=");
+        }
+
+        public Command RefreshCommand => new Command(ExecuteRefreshCommand);
+
+        public async void ExecuteRefreshCommand()
+        {
+            if (IsBusy)
+            {
+                return;
+            }
+
+            IsBusy = true;
+
+            try
+            {
+                SettingsDocument = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"TagsViewModel::ExecuteRefreshCommand() encountered an exception; {ex.GetType().Name}; {ex.Message}");
+            }
+
+            IsBusy = false;
+            IsRefreshing = false;
         }
              
         #endregion

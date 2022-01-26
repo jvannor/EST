@@ -4,7 +4,7 @@ using EST.Models;
 
 namespace EST.ServiceContracts
 {
-    internal interface ISettingsService
+    public interface ISettingsService
     {
         string UserName { get; set; }
 

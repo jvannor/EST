@@ -8,7 +8,7 @@ using EST.ServiceContracts;
 
 namespace EST.ViewModels
 {
-    internal class ViewModelBase : INotifyPropertyChanged
+    public class ViewModelBase : INotifyPropertyChanged
     {
         #region Events
 

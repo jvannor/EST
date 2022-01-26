@@ -6,43 +6,37 @@ using EST.ServiceContracts;
 
 namespace EST.ViewModels
 {
-    internal class LoginViewModel : ViewModelBase
+    public sealed class LoginViewModel : ViewModelBase
     {
-        #region Commands
+        #region Methods
 
-        public Command LoginCommand => new Command(OnLogin);
+        public LoginViewModel(ISettingsService settings, IAuthenticationService authenticationService, IDialogService dialogService) : base(settings)
+        {
+            Title = "Login";
+            this.authenticationService = authenticationService;
+            this.dialogService = dialogService;
+        }
 
         #endregion
 
-        #region Methods
+        #region Commands
 
-        public LoginViewModel(ISettingsService settings, IAuthenticationService authentication) : base(settings)
-        {
-            Title = "Login";
-            authenticationService = authentication;
-        }
+        public Command LoginCommand => new Command(ExecuteLoginCommand);
 
-        public async void OnLogin()
+        public async void ExecuteLoginCommand()
         {
             try
             {
-                if (!IsBusy)
+                var success = await authenticationService.Login();
+                if (success)
                 {
-                    IsBusy = true;
-
-                    var success = await authenticationService.Login();
-                    if (success)
-                    {
-                        await Shell.Current.GoToAsync("//Home");
-                    }
-
-                    IsBusy = false;
+                    await Shell.Current.GoToAsync("//Home");
                 }
             }
             catch(Exception ex)
             {
-                IsBusy = false;
                 Debug.WriteLine($"LoginViewModel::OnLogin() experienced an unexpected exception, {ex.GetType().Name}; {ex.Message}");
+                await dialogService.MessageBox("Error", "Login failed", "OK");
             }
         }
 
@@ -51,6 +45,7 @@ namespace EST.ViewModels
         #region Fields
 
         private IAuthenticationService authenticationService;
+        private IDialogService dialogService;
 
         #endregion
     }

@@ -8,7 +8,7 @@ using EST.ViewModels;
 
 namespace EST.Core
 {
-    internal static class AppContainer
+    public static class AppContainer
     {
         static AppContainer()
         {

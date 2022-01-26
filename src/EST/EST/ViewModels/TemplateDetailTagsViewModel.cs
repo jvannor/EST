@@ -7,17 +7,12 @@ using System.Text.Json;
 using System.Web;
 using Xamarin.Forms;
 using EST.ServiceContracts;
+using System.Threading.Tasks;
 
 namespace EST.ViewModels
 {
-    internal class TemplateDetailTagsViewModel : ViewModelBase, IQueryAttributable
+    public sealed class TemplateDetailTagsViewModel : ViewModelBase, IQueryAttributable
     {
-        #region Commands
-
-        public Command SaveCommand => new Command(ExecuteSaveCommand);
-
-        #endregion
-
         #region Properties
 
         public ObservableCollection<object> SelectedTags
@@ -43,54 +38,61 @@ namespace EST.ViewModels
             Title = "Tags";
             SelectedTags = new ObservableCollection<object>();
             Tags = new ObservableCollection<string>();
+            initialized = false;
             this.settingsDocumentService = settingsDocumentService;
-
-            Init();
-        }
-
-        private async void Init()
-        {
-            try
-            {
-                var doc = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
-                Tags = doc.Tags;
-            }
-            catch(Exception ex)
-            {
-                Debug.WriteLine($"TemplateDetailTagsViewModel::Init() encountered an exception; {ex.GetType().Name}; {ex.Message}");
-            }
         }
 
         public void ApplyQueryAttributes(IDictionary<string, string> query)
         {
-            if (!IsBusy)
+            if (query.ContainsKey("SelectedTags"))
             {
-                IsBusy = true;
-                if (query.ContainsKey("SelectedTags"))
-                {
-                    var json = HttpUtility.UrlDecode(query["SelectedTags"]);
-                    var tags = JsonSerializer.Deserialize<List<string>>(json);
-                    SelectedTags = new ObservableCollection<object>(tags);
-                }
-                IsBusy = false;
+                var json = HttpUtility.UrlDecode(query["SelectedTags"]);
+                var tags = JsonSerializer.Deserialize<List<string>>(json);
+                SelectedTags = new ObservableCollection<object>(tags);
             }
         }
 
+        #endregion
+
+        #region Commands
+
+        public Command AppearingCommand => new Command(ExecuteAppearingCommand);
+
+        public async void ExecuteAppearingCommand()
+        {
+            IsBusy = true;
+
+            try
+            {
+                if (!initialized)
+                {
+                    var doc = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
+                    Tags = doc.Tags;
+                    initialized = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"TemplateDetailTagsViewModel::ExecuteAppearingCommand() encountered an exception; {ex.GetType().Name}; {ex.Message}");
+            }
+
+            IsBusy = false;
+        }
+
+        public Command SaveCommand => new Command(ExecuteSaveCommand);
+
         public async void ExecuteSaveCommand(object parameter)
         {
-            if (!IsBusy)
-            {
-                IsBusy = true;
-                MessagingCenter.Send(this, "UpdateTags", SelectedTags.Select(x => x as string));
-                await Shell.Current.GoToAsync($"..?");
-                IsBusy = false;
-            }
+            IsBusy = true;
+            MessagingCenter.Send(this, "UpdateTags", SelectedTags.Select(x => x as string));
+            await Shell.Current.GoToAsync($"..?");
         }
 
         #endregion
 
         #region Fields
 
+        private bool initialized;
         private ObservableCollection<object> selectedTags;
         private ObservableCollection<string> tags;
         private ISettingsDocumentService settingsDocumentService;

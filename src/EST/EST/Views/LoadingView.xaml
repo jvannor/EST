@@ -14,8 +14,8 @@
     </ContentPage.Behaviors>
     <ContentPage.Content>
         <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
-            <ActivityIndicator Color="Accent" IsRunning="True" IsVisible="True" />
-            <Label Text="Loading..." FontSize="Medium" TextColor="{StaticResource PrimaryText}" />
+            <ActivityIndicator Color="Accent" IsRunning="True" IsVisible="True"/>
+            <Label Text="Loading..." FontSize="Medium" TextColor="{StaticResource PrimaryText}"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

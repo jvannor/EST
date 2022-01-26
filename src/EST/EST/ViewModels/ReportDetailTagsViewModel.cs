@@ -7,17 +7,12 @@ using System.Text.Json;
 using System.Web;
 using Xamarin.Forms;
 using EST.ServiceContracts;
+using System.Threading.Tasks;
 
 namespace EST.ViewModels
 {
-    internal class ReportDetailTagsViewModel : ViewModelBase, IQueryAttributable
+    public sealed class ReportDetailTagsViewModel : ViewModelBase, IQueryAttributable
     {
-        #region Commands
-
-        public Command SaveCommand => new Command(ExecuteSaveCommand);
-
-        #endregion
-
         #region Properties
 
         public ObservableCollection<object> SelectedTags
@@ -36,59 +31,65 @@ namespace EST.ViewModels
 
         #region Methods
 
-        public ReportDetailTagsViewModel(ISettingsService ss, ISettingsDocumentService sds) : base(ss)
+        public ReportDetailTagsViewModel(
+            ISettingsService settingsService,
+            ISettingsDocumentService settingsDocumentService) : base(settingsService)
         {
             Title = "Tags";
+            Tags = new ObservableCollection<string>();
+            SelectedTags = new ObservableCollection<object>();
+            initialized = false;
 
-            settingsDocumentService = sds;
-            tags = new ObservableCollection<string>();
-            selectedTags = new ObservableCollection<object>();
-
-            Init();
+            this.settingsDocumentService = settingsDocumentService;
         }
-
-        public async void Init()
-        {   
-            try
-            {
-                var doc = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
-                Tags = new ObservableCollection<string>(doc.Tags);
-            }
-            catch(Exception ex)
-            {
-
-                Debug.WriteLine($"ReportDetailTagsViewModel::Init() encountered an exception; {ex.GetType().Name}; {ex.Message}");
-            }
-        }   
 
         public void ApplyQueryAttributes(IDictionary<string, string> query)
         {
-            if (!IsBusy)
+            if (query.ContainsKey("SelectedTags"))
             {
-                IsBusy = true;
-                if (query.ContainsKey("SelectedTags"))
+                var encodedSelectedTags = query["SelectedTags"];
+                if (!string.IsNullOrEmpty(encodedSelectedTags))
                 {
-                    var encodedSelectedTags = query["SelectedTags"];
-                    if (!string.IsNullOrEmpty(encodedSelectedTags))
-                    {
-                        var selectedTagsJson = HttpUtility.UrlDecode(encodedSelectedTags);
-                        var selectedTags = JsonSerializer.Deserialize<string[]>(selectedTagsJson);
-                        SelectedTags = new ObservableCollection<object>(selectedTags);
-                    }
+                    var selectedTagsJson = HttpUtility.UrlDecode(encodedSelectedTags);
+                    var selectedTags = JsonSerializer.Deserialize<string[]>(selectedTagsJson);
+                    SelectedTags = new ObservableCollection<object>(selectedTags);
                 }
-                IsBusy = false;
             }
         }
 
+        #endregion
+
+        #region Commands
+
+        public Command AppearingCommand => new Command(ExecuteAppearingCommand);
+
+        public async void ExecuteAppearingCommand()
+        {
+            IsBusy = true;
+
+            try
+            {
+                if (!initialized)
+                {
+                    var doc = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
+                    Tags = new ObservableCollection<string>(doc.Tags);
+                    initialized = true;
+                }
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine($"ReportDetailTagsViewModel::Init() encountered an exception; {ex.GetType().Name}; {ex.Message}");
+            }
+
+            IsBusy = false;
+        }
+
+        public Command SaveCommand => new Command(ExecuteSaveCommand);
+
         public async void ExecuteSaveCommand(object parameter)
         {
-            if (!IsBusy)
-            {
-                IsBusy = true;
-                MessagingCenter.Send(this, "UpdateTags", SelectedTags.Select(x => x as string));
-                await Shell.Current.GoToAsync($"..?");
-                IsBusy = false;
-            }
+            MessagingCenter.Send(this, "UpdateTags", SelectedTags.Select(x => x as string));
+            await Shell.Current.GoToAsync($"..?");
         }
 
         #endregion
@@ -96,6 +97,7 @@ namespace EST.ViewModels
         #region Fields
 
         private ISettingsDocumentService settingsDocumentService;
+        private bool initialized;
         private ObservableCollection<object> selectedTags;
         private ObservableCollection<string> tags;
 

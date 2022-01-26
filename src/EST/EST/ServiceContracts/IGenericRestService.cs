@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace EST.ServiceContracts
 {
-    internal interface IGenericRestService
+    public interface IGenericRestService
     {
         Task<T> Get<T>(string uri, string authToken = "");
 

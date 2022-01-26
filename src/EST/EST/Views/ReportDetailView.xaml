@@ -43,11 +43,17 @@
                 <Picker Title="Detail" ItemsSource="{Binding Report.Details}" SelectedItem="{Binding Report.Detail}" FontSize="Medium" TextColor="{StaticResource PrimaryText}"/>
                 <BoxView HeightRequest="8"/>
 
-                <Label Text="Tags" FontSize="Small" TextColor="{StaticResource SecondaryText}">
-                    <Label.GestureRecognizers>
+                <StackLayout Orientation="Horizontal">
+                    <StackLayout.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding GoToTagsCommand}"/>
-                    </Label.GestureRecognizers>
-                </Label>
+                    </StackLayout.GestureRecognizers>
+                    <Label Text="Tags" FontSize="Small" TextColor="{StaticResource SecondaryText}"/>
+                    <Image>
+                        <Image.Source>
+                            <FontImageSource FontFamily="FontAwesomeSolid" Glyph="Angle-Right" Size="Small" Color="{StaticResource PrimaryColor}"/>
+                        </Image.Source>
+                    </Image>
+                </StackLayout>
                 <FlexLayout BindableLayout.ItemsSource="{Binding Report.Tags}" BindableLayout.EmptyView="None" Direction="Row" JustifyContent="Start" Wrap="Wrap">
                     <FlexLayout.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding GoToTagsCommand}" />

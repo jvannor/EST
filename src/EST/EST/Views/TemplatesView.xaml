@@ -4,10 +4,14 @@
     xmlns:utilities="clr-namespace:EST.Utilities"
     xmlns:vm="clr-namespace:EST.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
     IsBusy="{Binding IsBusy}"
     Title="{Binding Title}"
     utilities:ViewModelLocator.AutoWireViewModel="True"
     x:Class="EST.Views.TemplatesView">
+    <ContentPage.Behaviors>
+        <xct:EventToCommandBehavior EventName="Appearing" Command="{Binding AppearingCommand}"/>
+    </ContentPage.Behaviors>
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="New" Command="{Binding NewCommand}">
             <ToolbarItem.IconImageSource>

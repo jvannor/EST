@@ -3,7 +3,7 @@ using EST.Models;
 
 namespace EST.ServiceContracts
 {
-    internal interface ISettingsDocumentService
+    public interface ISettingsDocumentService
     {
         Task<SettingsDocument> GetSettingsDocument(string author, string subject);
 
