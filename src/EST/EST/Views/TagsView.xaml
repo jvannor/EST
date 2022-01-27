@@ -21,7 +21,7 @@
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <RefreshView IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshCommand}" Margin="16,8,16,0">
-            <CollectionView ItemsSource="{Binding SettingsDocument.Tags}" VerticalScrollBarVisibility="Never">
+            <CollectionView ItemsSource="{Binding Tags}" VerticalScrollBarVisibility="Never">
                 <CollectionView.ItemsLayout>
                     <LinearItemsLayout
                         Orientation="Vertical"

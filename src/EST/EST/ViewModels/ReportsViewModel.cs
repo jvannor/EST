@@ -40,8 +40,10 @@ namespace EST.ViewModels
         #region Methods
 
         public ReportsViewModel(
+            IAuthenticationService authenticationService,
+            IDialogService dialogService,
             ISettingsService settingsService,
-            IReportsDataService reportsDataService) : base(settingsService)
+            IReportsDataService reportsDataService) : base(authenticationService, dialogService, settingsService)
         {
             Title = "Reports";
             Reports = new ObservableCollection<Report>();
@@ -61,7 +63,7 @@ namespace EST.ViewModels
                 Reports.Clear();
                 ReportThreshold = 1;
 
-                var reports = await reportsDataService.GetReports(settingsService.UserName, 0, 10);
+                var reports = await reportsDataService.GetReports(0, 10);
                 foreach (var report in reports)
                 {
                     report.Created = report.Created.ToLocalTime();
@@ -183,7 +185,7 @@ namespace EST.ViewModels
 
             try
             {
-                var reports = await reportsDataService.GetReports(settingsService.UserName, Reports.Count / 10, 10);
+                var reports = await reportsDataService.GetReports(Reports.Count / 10, 10);
                 if ((reports.Count() == 0) || (reports.Last().Id == Reports.Last().Id))
                 {
                     ReportThreshold = -1;
@@ -225,10 +227,10 @@ namespace EST.ViewModels
 
         #region Fields
 
+        private readonly IReportsDataService reportsDataService;
         private bool isRefreshing;
-        private IReportsDataService reportsDataService;
-        private ObservableCollection<Report> reports;
         private int reportThreshold;
+        private ObservableCollection<Report> reports;
 
         #endregion
     }

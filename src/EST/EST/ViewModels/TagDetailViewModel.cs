@@ -23,10 +23,12 @@ namespace EST.ViewModels
 
         #region Methods
 
-        public TagDetailViewModel(ISettingsService settingsService, IDialogService dialogService) : base(settingsService)
+        public TagDetailViewModel(
+            IAuthenticationService authenticationService,
+            IDialogService dialogService,
+            ISettingsService settingsService) : base(authenticationService, dialogService, settingsService)
         {
             Title = "Tag";
-            this.dialogService = dialogService;
         }
 
         public void ApplyQueryAttributes(IDictionary<string, string> query)
@@ -70,7 +72,6 @@ namespace EST.ViewModels
 
         #region Fields
 
-        private IDialogService dialogService;
         private string tag1;
         private string tag2;
 

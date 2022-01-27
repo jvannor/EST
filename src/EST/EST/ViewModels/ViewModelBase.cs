@@ -34,9 +34,14 @@ namespace EST.ViewModels
 
         #region Methods
 
-        public ViewModelBase(ISettingsService settings)
+        public ViewModelBase(
+            IAuthenticationService authenticationService,
+            IDialogService dialogService,
+            ISettingsService settingsService)
         {
-            settingsService = settings;
+            this.authenticationService = authenticationService;
+            this.dialogService = dialogService;
+            this.settingsService = settingsService;
         }
 
         protected bool SetProperty<T>(ref T backingStore, T value,
@@ -65,7 +70,10 @@ namespace EST.ViewModels
 
         #region Fields
 
+        protected readonly IAuthenticationService authenticationService;
+        protected readonly IDialogService dialogService;
         protected readonly ISettingsService settingsService;
+
         private bool isBusy = false;
         private string title = string.Empty;
 

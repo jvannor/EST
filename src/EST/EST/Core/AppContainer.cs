@@ -34,7 +34,6 @@ namespace EST.Core
             builder.RegisterType<GenericRestService>().As<IGenericRestService>();
             builder.RegisterType<ReportsDataService>().As<IReportsDataService>();
             builder.RegisterType<SettingsService>().As<ISettingsService>();
-            builder.RegisterType<SettingsDocumentService>().As<ISettingsDocumentService>();
 
             container = builder.Build();
         }

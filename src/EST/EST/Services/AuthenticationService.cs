@@ -14,7 +14,7 @@ namespace EST.Services
 {
     public sealed class AuthenticationService : IAuthenticationService
     {
-        public AuthenticationService(ISettingsService settings)
+        public AuthenticationService()
         {
             client = new OidcClient(new OidcClientOptions()
             {
@@ -25,8 +25,6 @@ namespace EST.Services
                 RedirectUri = Constants.RedirectUri,
                 Scope = Constants.Scope
             });
-
-            settingsService = settings;
         }
 
         public async Task<bool> Authenticated()
@@ -55,7 +53,10 @@ namespace EST.Services
             var loginResult = await client.LoginAsync();
             if (!loginResult.IsError)
             {
-                settingsService.UserName = loginResult?.User?.Identity?.Name;
+                var userName = loginResult.User.Identity.Name;
+                await SetAuthor(userName);
+                await SetSubject(userName);
+
                 var credentials = loginResult.ToCredentials();
                 var json = JsonSerializer.Serialize(credentials);
                 await SecureStorage.SetAsync("est.mobile.credentials", json);
@@ -77,7 +78,9 @@ namespace EST.Services
                     Debug.WriteLine("AuthenticationService::Logout() - logout returned false");
                 }
 
-                settingsService.UserName = string.Empty;
+                await SetAuthor(string.Empty);
+                await SetSubject(string.Empty);
+
                 var storageResult = SecureStorage.Remove("est.mobile.credentials");
                 if (!storageResult)
                 {
@@ -116,7 +119,26 @@ namespace EST.Services
             return result;
         }
 
+        public async Task<string> GetAuthor()
+        {
+            return Preferences.Get("Author", string.Empty);
+        }
+
+        public async Task SetAuthor(string author)
+        {
+            Preferences.Set("Author", author);
+        }
+
+        public async Task<string> GetSubject()
+        {
+            return Preferences.Get("Subject", string.Empty);
+        }
+
+        public async Task SetSubject(string subject)
+        {
+            Preferences.Set("Subject", subject);
+        }
+
         private OidcClient client;
-        private readonly ISettingsService settingsService;
     }
 }

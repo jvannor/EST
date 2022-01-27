@@ -25,12 +25,12 @@ namespace EST.ViewModels
         #region Methods
 
         public ReportDetailViewModel(
-            ISettingsService settingsService,
+            IAuthenticationService authenticationService,
             IDialogService dialogService,
-            IReportsDataService reportsDataService) : base(settingsService)
+            ISettingsService settingsService,
+            IReportsDataService reportsDataService) : base(authenticationService, dialogService, settingsService)
         {
             Title = "Report";
-            this.dialogService = dialogService;
             this.reportsDataService = reportsDataService;
             
             MessagingCenter.Subscribe<ReportDetailTagsViewModel, IEnumerable<string>>(this, "UpdateTags", ExecuteUpdateTags);
@@ -132,9 +132,8 @@ namespace EST.ViewModels
 
         #region Fields
 
+        private readonly IReportsDataService reportsDataService;
         private Report report;
-        private IReportsDataService reportsDataService;
-        private IDialogService dialogService;
 
         #endregion
     }

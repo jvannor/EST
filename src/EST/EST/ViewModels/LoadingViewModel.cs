@@ -9,10 +9,12 @@ namespace EST.ViewModels
     {
         #region Methods
 
-        public LoadingViewModel(ISettingsService settings, IAuthenticationService authentication) : base(settings)
+        public LoadingViewModel(
+            IAuthenticationService authenticationService,
+            IDialogService dialogService,
+            ISettingsService settingsService) : base(authenticationService, dialogService, settingsService)
         {
             Title = "Loading";
-            authenticationService = authentication;
         }
 
         #endregion
@@ -45,12 +47,6 @@ namespace EST.ViewModels
 
             IsBusy = false;
         }
-
-        #endregion
-
-        #region Fields
-
-        private IAuthenticationService authenticationService;
 
         #endregion
     }

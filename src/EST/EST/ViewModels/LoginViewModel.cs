@@ -10,11 +10,12 @@ namespace EST.ViewModels
     {
         #region Methods
 
-        public LoginViewModel(ISettingsService settings, IAuthenticationService authenticationService, IDialogService dialogService) : base(settings)
+        public LoginViewModel(
+            IAuthenticationService authenticationService,
+            IDialogService dialogService,
+            ISettingsService settingsService) : base(authenticationService, dialogService, settingsService)
         {
             Title = "Login";
-            this.authenticationService = authenticationService;
-            this.dialogService = dialogService;
         }
 
         #endregion
@@ -39,13 +40,6 @@ namespace EST.ViewModels
                 await dialogService.MessageBox("Error", "Login failed", "OK");
             }
         }
-
-        #endregion
-
-        #region Fields
-
-        private IAuthenticationService authenticationService;
-        private IDialogService dialogService;
 
         #endregion
     }

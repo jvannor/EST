@@ -23,10 +23,10 @@ namespace EST.ViewModels
             set { SetProperty(ref isRefreshing, value); }
         }
 
-        public SettingsDocument SettingsDocument
+        public ObservableCollection<ReportTemplate> ReportTemplates
         {
-            get { return settingsDocument; }
-            set { SetProperty(ref settingsDocument, value); }
+            get { return reportTemplates; }
+            set { SetProperty(ref reportTemplates, value); }
         }
 
         #endregion
@@ -34,12 +34,12 @@ namespace EST.ViewModels
         #region Methods
 
         public HomeViewModel(
+            IAuthenticationService authenticationService,
+            IDialogService dialogService,
             ISettingsService settingsService,
-            ISettingsDocumentService settingsDocumentService,
-            IReportsDataService reportDataService) : base(settingsService)
+            IReportsDataService reportDataService) : base(authenticationService, dialogService, settingsService)
         {
             Title = "Epileptic Seizure Tracker";
-            this.settingsDocumentService = settingsDocumentService;
             this.reportDataService = reportDataService;
         }
 
@@ -55,9 +55,9 @@ namespace EST.ViewModels
 
             try
             {
-                if (SettingsDocument == null)
+                if (ReportTemplates == null)
                 {
-                    SettingsDocument = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
+                    ReportTemplates = new ObservableCollection<ReportTemplate>(await settingsService.GetReportTemplates());
                 }
             }
             catch(Exception ex)
@@ -80,8 +80,8 @@ namespace EST.ViewModels
                 {
                     Id = string.Empty,
                     ReportType = "Seizure Report",
-                    Author = settingsService.UserName,
-                    Subject = settingsService.UserName,
+                    Author = await authenticationService.GetAuthor(),
+                    Subject = await authenticationService.GetSubject(),
                     Revision = 1,
                     Created = timeStamp,
                     Modified = timeStamp,
@@ -112,7 +112,7 @@ namespace EST.ViewModels
 
             try
             {
-                SettingsDocument = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
+                ReportTemplates = new ObservableCollection<ReportTemplate>(await settingsService.GetReportTemplates());
             }
             catch(Exception ex)
             {
@@ -127,10 +127,9 @@ namespace EST.ViewModels
 
         #region Fields
 
-        private ISettingsDocumentService settingsDocumentService;
-        private IReportsDataService reportDataService;
+        private readonly IReportsDataService reportDataService;
         private bool isRefreshing;
-        private SettingsDocument settingsDocument;
+        private ObservableCollection<ReportTemplate> reportTemplates;
 
         #endregion
     }

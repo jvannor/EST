@@ -3,10 +3,14 @@
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:utilities="clr-namespace:EST.Utilities"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
     utilities:ViewModelLocator.AutoWireViewModel="True"
     IsBusy="{Binding IsBusy}"
     Title="{Binding Title}"
     x:Class="EST.Views.SettingsView">
+    <ContentPage.Behaviors>
+        <xct:EventToCommandBehavior EventName="Appearing" Command="{Binding AppearingCommand}"/>
+    </ContentPage.Behaviors>
     <ContentPage.Content>
         <StackLayout Margin="16,16,16,0">
             <Label Text="Epileptic Seizure Tracker" FontSize="Medium" TextColor="{StaticResource PrimaryText}"/>
@@ -16,8 +20,12 @@
             <Entry Text="1" IsReadOnly="True" FontSize="Medium" TextColor="{StaticResource PrimaryText}"/>
             <BoxView HeightRequest="8"/>
 
-            <Label Text="User" FontSize="Small" TextColor="{StaticResource SecondaryText}"/>
-            <Entry Text="{Binding UserName}" FontSize="Medium" IsReadOnly="True" TextColor="{StaticResource PrimaryText}"/>
+            <Label Text="Author" FontSize="Small" TextColor="{StaticResource SecondaryText}"/>
+            <Entry Text="{Binding Author}" FontSize="Medium" IsReadOnly="True" TextColor="{StaticResource PrimaryText}"/>
+            <BoxView HeightRequest="8"/>
+
+            <Label Text="Subject" FontSize="Small" TextColor="{StaticResource SecondaryText}"/>
+            <Entry Text="{Binding Subject}" FontSize="Medium" IsReadOnly="True" TextColor="{StaticResource PrimaryText}"/>
             <BoxView HeightRequest="8"/>
 
             <Frame BorderColor="{StaticResource DarkPrimaryColor}" HasShadow="False" Padding="8,4,8,4">

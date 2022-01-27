@@ -32,15 +32,14 @@ namespace EST.ViewModels
         #region Methods
 
         public ReportDetailTagsViewModel(
-            ISettingsService settingsService,
-            ISettingsDocumentService settingsDocumentService) : base(settingsService)
+            IAuthenticationService authenticationService,
+            IDialogService dialogService,
+            ISettingsService settingsService) : base(authenticationService, dialogService, settingsService)
         {
             Title = "Tags";
             Tags = new ObservableCollection<string>();
             SelectedTags = new ObservableCollection<object>();
             initialized = false;
-
-            this.settingsDocumentService = settingsDocumentService;
         }
 
         public void ApplyQueryAttributes(IDictionary<string, string> query)
@@ -71,8 +70,7 @@ namespace EST.ViewModels
             {
                 if (!initialized)
                 {
-                    var doc = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
-                    Tags = new ObservableCollection<string>(doc.Tags);
+                    Tags = new ObservableCollection<string>(await settingsService.GetTags());
                     initialized = true;
                 }
             }
@@ -96,7 +94,6 @@ namespace EST.ViewModels
 
         #region Fields
 
-        private ISettingsDocumentService settingsDocumentService;
         private bool initialized;
         private ObservableCollection<object> selectedTags;
         private ObservableCollection<string> tags;
