@@ -21,10 +21,10 @@ namespace EST.ViewModels
             set { SetProperty(ref isRefreshing, value); }
         }
 
-        public SettingsDocument SettingsDocument
+        public ObservableCollection<string> Tags
         {
-            get { return settingsDocument; }
-            set { SetProperty(ref settingsDocument, value); }
+            get { return tags; }
+            set { SetProperty(ref tags, value); }
         }
 
         #endregion
@@ -32,12 +32,12 @@ namespace EST.ViewModels
         #region Methods
 
         public TagsViewModel(
-            ISettingsService settingsService,
-            ISettingsDocumentService settingsDocumentService) : base(settingsService)
+            IAuthenticationService authenticationService,
+            IDialogService dialogService,
+            ISettingsService settingsService) : base(authenticationService, dialogService, settingsService)
         {
             Title = "Tags";
             IsRefreshing = false;
-            this.settingsDocumentService = settingsDocumentService;
 
             MessagingCenter.Subscribe<TagDetailViewModel, string>(this, "DeleteTag", ExecuteDeleteTag);
             MessagingCenter.Subscribe<TagDetailViewModel, (string, string)>(this, "UpdateTag", ExecuteUpdateTag);
@@ -47,11 +47,11 @@ namespace EST.ViewModels
         {
             try
             {
-                var target = SettingsDocument.Tags.Where(t => t == tag).FirstOrDefault();
+                var target = Tags.Where(t => t == tag).FirstOrDefault();
                 if (target != null)
                 {
-                    SettingsDocument.Tags.Remove(tag);
-                    await settingsDocumentService.UpdateSettingsDocument(SettingsDocument);
+                    Tags.Remove(tag);
+                    await settingsService.SetTags(Tags);
                 }
             }
             catch (Exception ex)
@@ -66,14 +66,14 @@ namespace EST.ViewModels
             {
                 if (string.IsNullOrEmpty(tag.Item1) && (!string.IsNullOrEmpty(tag.Item2)))
                 {
-                    SettingsDocument.Tags.Add(tag.Item2);
-                    await settingsDocumentService.UpdateSettingsDocument(SettingsDocument);
+                    Tags.Add(tag.Item2);
+                    await settingsService.SetTags(Tags);
                 }
-                else if (SettingsDocument.Tags.Contains(tag.Item1))
+                else if (Tags.Contains(tag.Item1))
                 {
-                    var i = SettingsDocument.Tags.IndexOf(tag.Item1);
-                    SettingsDocument.Tags[i] = tag.Item2;
-                    await settingsDocumentService.UpdateSettingsDocument(SettingsDocument);
+                    var i = Tags.IndexOf(tag.Item1);
+                    Tags[i] = tag.Item2;
+                    await settingsService.SetTags(Tags);
                 }
             }
             catch (Exception ex)
@@ -94,9 +94,9 @@ namespace EST.ViewModels
 
             try
             {
-                if (SettingsDocument == null)
+                if (Tags == null)
                 {
-                    SettingsDocument = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
+                    Tags = new ObservableCollection<string>(await settingsService.GetTags());
                 }
             }
             catch(Exception ex)
@@ -135,7 +135,7 @@ namespace EST.ViewModels
 
             try
             {
-                SettingsDocument = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
+                Tags = new ObservableCollection<string>(await settingsService.GetTags());
             }
             catch (Exception ex)
             {
@@ -150,9 +150,8 @@ namespace EST.ViewModels
 
         #region Fields
 
-        private ISettingsDocumentService settingsDocumentService;
-        private SettingsDocument settingsDocument;
         private bool isRefreshing;
+        private ObservableCollection<string> tags;
 
         #endregion
     }

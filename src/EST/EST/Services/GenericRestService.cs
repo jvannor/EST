@@ -9,6 +9,8 @@ namespace EST.Services
 {
     public sealed class GenericRestService : IGenericRestService
     {
+        #region Methods
+
         public async Task<T> Get<T>(string uri, string authToken = "")
         {
             client.DefaultRequestHeaders.Clear();
@@ -111,6 +113,12 @@ namespace EST.Services
             throw new HttpRequestException($"HTTP error, {serviceResponse.StatusCode}");
         }
 
+        #endregion
+
+        #region Fields
+
         private HttpClient client = new HttpClient();
+
+        #endregion
     }
 }

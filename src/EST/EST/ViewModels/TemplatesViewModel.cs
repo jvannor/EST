@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Web;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Linq;
 using Xamarin.Forms;
 using EST.Models;
 using EST.ServiceContracts;
-using System.Threading.Tasks;
 
 namespace EST.ViewModels
 {
@@ -14,16 +15,16 @@ namespace EST.ViewModels
     {
         #region Properties
 
-        public SettingsDocument SettingsDocument
-        {
-            get { return settingsDocument; }
-            set { SetProperty(ref settingsDocument, value); }
-        }
-
         public bool IsRefreshing
         {
             get { return isRefreshing; }
             set { SetProperty(ref isRefreshing, value); }
+        }
+
+        public ObservableCollection<ReportTemplate> ReportTemplates
+        {
+            get { return reportTemplates; }
+            set { SetProperty(ref reportTemplates, value); }
         }
 
         #endregion
@@ -31,11 +32,11 @@ namespace EST.ViewModels
         #region Methods
 
         public TemplatesViewModel(
-            ISettingsService settingsService,
-            ISettingsDocumentService settingsDocumentService) : base(settingsService)
+            IAuthenticationService authenticationService,
+            IDialogService dialogService,
+            ISettingsService settingsService) : base(authenticationService, dialogService, settingsService)
         {
             Title = "Templates";
-            this.settingsDocumentService = settingsDocumentService;
 
             MessagingCenter.Subscribe<TemplateDetailViewModel, ReportTemplate>(this, "DeleteReportTemplate", ExecuteDeleteReportTemplate);
             MessagingCenter.Subscribe<TemplateDetailViewModel, ReportTemplate>(this, "SaveReportTemplate", ExecuteSaveReportTemplate);
@@ -52,11 +53,11 @@ namespace EST.ViewModels
 
             try
             {
-                var target = SettingsDocument.Templates.Where(t => t.Title == template.Title).FirstOrDefault();
+                var target = ReportTemplates.Where(t => t.Title == template.Title).FirstOrDefault();
                 if (target != null)
                 {
-                    await settingsDocumentService.UpdateSettingsDocument(SettingsDocument);
-                    SettingsDocument.Templates.Remove(target);
+                    ReportTemplates.Remove(target);
+                    await settingsService.SetReportTemplates(ReportTemplates);
                 }
             }
             catch (Exception ex)
@@ -78,17 +79,17 @@ namespace EST.ViewModels
 
             try
             {
-                var target = SettingsDocument.Templates.Where(t => t.Title == template.Title).FirstOrDefault();
+                var target = ReportTemplates.Where(t => t.Title == template.Title).FirstOrDefault();
                 if (target != null)
                 {
-                    var idx = SettingsDocument.Templates.IndexOf(target);
-                    SettingsDocument.Templates[idx] = template;
-                    await settingsDocumentService.UpdateSettingsDocument(SettingsDocument);
+                    var idx = ReportTemplates.IndexOf(target);
+                    ReportTemplates[idx] = template;
+                    await settingsService.SetReportTemplates(reportTemplates);
                 }
                 else
                 {
-                    await settingsDocumentService.UpdateSettingsDocument(SettingsDocument);
-                    SettingsDocument.Templates.Add(template);
+                    ReportTemplates.Add(template);
+                    await settingsService.SetReportTemplates(reportTemplates);
                 }
             }
             catch (Exception ex)
@@ -111,9 +112,9 @@ namespace EST.ViewModels
 
             try
             {
-                if (SettingsDocument == null)
+                if (ReportTemplates == null)
                 {
-                    SettingsDocument = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
+                    ReportTemplates = new ObservableCollection<ReportTemplate>(await settingsService.GetReportTemplates());
                 }
             }
             catch(Exception ex)
@@ -153,7 +154,7 @@ namespace EST.ViewModels
 
             try
             {
-                SettingsDocument = await settingsDocumentService.GetSettingsDocument(settingsService.UserName, settingsService.UserName);
+                ReportTemplates = new ObservableCollection<ReportTemplate>(await settingsService.GetReportTemplates());
             }
             catch (Exception ex)
             {
@@ -168,8 +169,7 @@ namespace EST.ViewModels
 
         #region Fields
 
-        private ISettingsDocumentService settingsDocumentService;
-        private SettingsDocument settingsDocument;
+        private ObservableCollection<ReportTemplate> reportTemplates;
         private bool isRefreshing;
 
         #endregion

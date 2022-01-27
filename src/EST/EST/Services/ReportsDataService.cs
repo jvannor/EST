@@ -9,7 +9,9 @@ namespace EST.Services
 {
     public sealed class ReportsDataService : IReportsDataService
     {
-        public ReportsDataService(IAuthenticationService authentication, IGenericRestService service)
+        public ReportsDataService(
+            IAuthenticationService authentication,
+            IGenericRestService service)
         {
             authenticationService = authentication;
             genericRestService = service;
@@ -33,10 +35,11 @@ namespace EST.Services
             return result;
         }
 
-        public async Task<IEnumerable<Report>> GetReports(string subject, int page = 0, int size = 10)
+        public async Task<IEnumerable<Report>> GetReports(int page = 0, int size = 10)
         {
             var uriBuilder = new UriBuilder(Constants.Api);
             uriBuilder.Path = Constants.ReportsApiEndpoint;
+            var subject = await authenticationService.GetSubject();
             uriBuilder.Query = $"subject={subject}&page={page}&size={size}";
 
             var credentials = await authenticationService.GetCredentials();

@@ -22,7 +22,7 @@
     <ContentPage.Content>
         <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}" Margin="16,8,16,0">
             <CollectionView
-                ItemsSource="{Binding SettingsDocument.Templates}">
+                ItemsSource="{Binding ReportTemplates}">
                 <CollectionView.ItemsLayout>
                     <LinearItemsLayout Orientation="Vertical" ItemSpacing="8"/>
                 </CollectionView.ItemsLayout>

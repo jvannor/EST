@@ -14,7 +14,7 @@
     </ContentPage.Behaviors>
     <ContentPage.Content>
         <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}" Margin="16,8,16,0">
-            <CollectionView ItemsSource="{Binding SettingsDocument.Templates}" VerticalScrollBarVisibility="Never">
+            <CollectionView ItemsSource="{Binding ReportTemplates}" VerticalScrollBarVisibility="Never">
                 <CollectionView.ItemsLayout>
                     <LinearItemsLayout Orientation="Vertical" ItemSpacing="16"/>
                 </CollectionView.ItemsLayout>

@@ -24,12 +24,11 @@ namespace EST.ViewModels
         #region Methods
 
         public TemplateDetailViewModel(
-            ISettingsService settingsService,
-            IDialogService dialogService) : base(settingsService)
+            IAuthenticationService authenticationService,
+            IDialogService dialogService,
+            ISettingsService settingsService) : base(authenticationService, dialogService, settingsService)
         {
             Title = "Template";
-            this.dialogService = dialogService;
-
             MessagingCenter.Subscribe<TemplateDetailTagsViewModel, IEnumerable<string>>(this, "UpdateTags", ExecuteUpdateTags);
         }
 
@@ -91,7 +90,6 @@ namespace EST.ViewModels
 
         #region Fields
 
-        private IDialogService dialogService;
         private ReportTemplate reportTemplate;
 
         #endregion

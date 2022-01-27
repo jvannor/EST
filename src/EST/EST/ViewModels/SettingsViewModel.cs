@@ -9,27 +9,41 @@ namespace EST.ViewModels
     {
         #region Properties
 
-        public string UserName
+        public string Author
         {
-            get { return userName; }
-            set { SetProperty(ref userName, value); }
+            get { return author; }
+            set { SetProperty(ref author, value); }
+        }
+
+        public string Subject
+        {
+            get { return subject; }
+            set { SetProperty(ref subject, value); }
         }
 
         #endregion
 
         #region Methods
 
-        public SettingsViewModel(ISettingsService settingsService, IAuthenticationService authenticationService) : base(settingsService)
+        public SettingsViewModel(
+            IAuthenticationService authenticationService,
+            IDialogService dialogService,
+            ISettingsService settingsService) : base(authenticationService, dialogService, settingsService)
         {
             Title = "General";
-
-            UserName = settingsService?.UserName;
-            this.authenticationService = authenticationService;
         }
 
         #endregion
 
         #region Commands
+
+        public Command AppearingCommand => new Command(ExecuteAppearingCommand);
+
+        public async void ExecuteAppearingCommand()
+        {
+            Author = await authenticationService.GetAuthor();
+            Subject = await authenticationService.GetSubject();
+        }
 
         public Command LogoutCommand => new Command(ExecuteLogoutCommand);
 
@@ -50,8 +64,8 @@ namespace EST.ViewModels
 
         #region Fields
 
-        private IAuthenticationService authenticationService;
-        private string userName;
+        private string author;
+        private string subject;
 
         #endregion
     }
