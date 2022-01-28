@@ -28,13 +28,13 @@
             <Entry Text="{Binding Subject}" FontSize="Medium" IsReadOnly="True" TextColor="{StaticResource PrimaryText}"/>
             <BoxView HeightRequest="8"/>
 
-            <Frame BorderColor="{StaticResource DarkPrimaryColor}" HasShadow="False" Padding="8,4,8,4">
-                <Label Text="Logout" HorizontalOptions="Center" FontSize="Medium" TextColor="{StaticResource PrimaryText}">
-                    <Label.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding LogoutCommand}" />
-                    </Label.GestureRecognizers>
-                </Label>
-            </Frame>
+            <Button
+                Text="Logout"
+                Command="{Binding LogoutCommand}"
+                BackgroundColor="Transparent"
+                BorderColor="{StaticResource DarkPrimaryColor}"
+                BorderWidth="1"
+                FontSize="Medium"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

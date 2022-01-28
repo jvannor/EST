@@ -17,13 +17,13 @@
             <Label Text="Welcome" HorizontalOptions="Center" FontSize="Large" TextColor="{StaticResource PrimaryText}" />
             <BoxView HeightRequest="24"/>
 
-            <Frame BorderColor="{StaticResource DarkPrimaryColor}" HasShadow="False" Padding="8,4,8,4">
-                <Label Text="Login" HorizontalOptions="Center" FontSize="Medium" TextColor="{StaticResource PrimaryText}">
-                    <Label.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding LoginCommand}" />
-                    </Label.GestureRecognizers>
-                </Label>
-            </Frame>
+            <Button
+                Text="Login"
+                Command="{Binding LoginCommand}"
+                BackgroundColor="Transparent"
+                BorderColor="{StaticResource DarkPrimaryColor}"
+                BorderWidth="1"
+                FontSize="Medium"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
