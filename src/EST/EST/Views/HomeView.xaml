@@ -9,14 +9,40 @@
     Title="{Binding Title}"
     utilities:ViewModelLocator.AutoWireViewModel="True"
     x:Class="EST.Views.HomeView">
+    <ContentPage.Resources>
+        <DataTemplate x:Key="EmptyViewTemplate">
+            <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
+                <Label Text="Welcome!" FontSize="Medium" TextColor="{StaticResource PrimaryText}"/>
+                <Label Text="No report templates available." FontSize="Small" TextColor="{StaticResource SecondaryText}" LineBreakMode="WordWrap"/>
+            </StackLayout>
+        </DataTemplate>
+        <DataTemplate x:Key="ItemTemplate">
+            <StackLayout Padding="2,0,2,0">
+                <Button
+                    Text="{Binding Title, StringFormat='New {0}'}"
+                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HomeViewModel}}, Path=NewReportCommand}"
+                    CommandParameter="{Binding .}"
+                    BackgroundColor="Transparent"
+                    BorderColor="{StaticResource DarkPrimaryColor}"
+                    BorderWidth="1"
+                    FontSize="Medium"/>
+            </StackLayout>
+        </DataTemplate>
+        <DataTemplate x:Key="HeaderTemplate">
+        </DataTemplate>
+    </ContentPage.Resources>
     <ContentPage.Behaviors>
         <xct:EventToCommandBehavior EventName="Appearing" Command="{Binding AppearingCommand}"/>
     </ContentPage.Behaviors>
     <ContentPage.Content>
-        <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}" Margin="16,8,16,0">
-            <CollectionView ItemsSource="{Binding ReportTemplates}" VerticalScrollBarVisibility="Never">
+        <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}" Margin="14,8,14,0">
+            <CollectionView
+                ItemsSource="{Binding ReportTemplates}"
+                EmptyViewTemplate="{StaticResource EmptyViewTemplate}"
+                ItemTemplate="{StaticResource ItemTemplate}"
+                VerticalScrollBarVisibility="Never">
                 <CollectionView.ItemsLayout>
-                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="16"/>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="8"/>
                 </CollectionView.ItemsLayout>
                 <CollectionView.Header>
                     <StackLayout x:Name="Header">
@@ -27,26 +53,6 @@
                         </Image>
                     </StackLayout>
                 </CollectionView.Header>
-                <CollectionView.EmptyViewTemplate>
-                    <DataTemplate>
-                        <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
-                            <Label Text="Welcome!" FontSize="Medium" TextColor="{StaticResource PrimaryText}"/>
-                            <Label Text="No report templates available." FontSize="Small" TextColor="{StaticResource SecondaryText}" LineBreakMode="WordWrap"/>
-                        </StackLayout>
-                    </DataTemplate>
-                </CollectionView.EmptyViewTemplate>
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Frame BorderColor="{StaticResource DarkPrimaryColor}" HasShadow="False" Padding="8,4,8,4">
-                            <Frame.GestureRecognizers>
-                                <TapGestureRecognizer
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HomeViewModel}}, Path=NewReportCommand}"
-                                    CommandParameter="{Binding .}" />
-                            </Frame.GestureRecognizers>
-                            <Label Text="{Binding Title, StringFormat='New {0}'}" HorizontalOptions="Center" FontSize="Medium" TextColor="{StaticResource PrimaryText}"/>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
             </CollectionView>
         </RefreshView>
     </ContentPage.Content>
